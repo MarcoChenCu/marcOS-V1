@@ -15,9 +15,9 @@ development with its low-level utility classes and responsive design capabilitie
 
 TailAdmin provides essential UI components and layouts for building feature-rich, data-driven admin dashboards and control panels. It's built on:
 
-- Vue 3 (Vite)
+- Vue 3.x (Vite)
+- Tailwind CSS 4.x
 - TypeScript
-- Tailwind CSS
 
 ### Quick Links
 
@@ -37,6 +37,7 @@ TailAdmin provides essential UI components and layouts for building feature-rich
 - [HTML Version](https://github.com/TailAdmin/tailadmin-free-tailwind-dashboard-template)
 - [Next.js Version](https://github.com/TailAdmin/free-nextjs-admin-dashboard)
 - [React Version](https://github.com/TailAdmin/free-react-tailwind-admin-dashboard)
+- [Angular Version](https://github.com/TailAdmin/free-angular-tailwind-dashboard)
 
 ## Installation
 
@@ -89,15 +90,14 @@ git clone https://github.com/TailAdmin/vue-tailwind-admin-dashboard.git
 ### Free Version
 
 - 1 Unique Dashboard
-- 30+ dashboard components
-- 50+ UI elements
+- 50+ Dashboard UI components
 - Basic Figma design files
 - Community support
 
 ### Pro Version
 
-- 5 Unique Dashboards: Analytics, Ecommerce, Marketing, CRM, Stocks (more coming soon)
-- 400+ dashboard components and UI elements
+- 7 Unique Dashboards: Analytics, Ecommerce, Marketing, CRM, Stocks (more coming soon)
+- 500+ dashboard components and UI elements
 - Complete Figma design file
 - Email support
 
