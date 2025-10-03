@@ -186,13 +186,24 @@ const keepLoggedIn = ref(false)
 const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value
 }
-
-const handleSubmit = () => {
-  // Handle form submission
-  console.log('Form submitted', {
-    user: user.value,
-    password: password.value,
-    keepLoggedIn: keepLoggedIn.value,
-  })
+import axios from "axios"
+// const handleSubmit = () => {
+//   // Handle form submission
+//   console.log('Form submitted', {
+//     user: user.value,
+//     password: password.value,
+//     keepLoggedIn: keepLoggedIn.value,
+//   })
+// }
+const handleSubmit = async () => {
+  try {
+    const response = await axios.post("http://localhost:3000/login", {
+      user: form.value.user,
+      password: form.value.password,
+    })
+    console.log("Login:", response.data)
+  } catch (err) {
+    console.error("Error login:", err)
+  }
 }
 </script>

@@ -8,4 +8,8 @@ Distribución Linux basada en Ubuntu Server 22.04 LTS que ofrece un entorno simp
 - `components/` - Componentes reutilizables de Vue
 - `views/` - Vistas principales del dashboard
 
+
+## Plantilla panel de administración
+[vue-tailwind-admin-dashboard](https://github.com/TailAdmin/vue-tailwind-admin-dashboard)
+
 ## Licencia
