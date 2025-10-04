@@ -197,9 +197,9 @@ import axios from "axios"
 // }
 const handleSubmit = async () => {
   try {
-    const response = await axios.post("http://localhost:3000/login", {
-      user: form.value.user,
-      password: form.value.password,
+    const response = await axios.get("http://localhost:3000", {
+      
+      
     })
     console.log("Login:", response.data)
   } catch (err) {
