@@ -197,13 +197,23 @@ import axios from "axios"
 // }
 const handleSubmit = async () => {
   try {
-    const response = await axios.get("http://localhost:3000", {
-      
-      
+    const response = await axios.post("http://localhost:3000/api/login", {
+      user: user.value,
+      password: password.value,
+      keepLoggedIn: keepLoggedIn.value,
     })
-    console.log("Login:", response.data)
+    if (response.data.success) {
+      localStorage.setItem("token", response.data.token)
+      localStorage.setItem("user", response.data.user)
+      //redirigir al dashboard      
+      console.log("res:",response.data)
+      //window.location.href = "/dashboard"
+    } else {
+      alert("Credenciales incorrectas")
+    }
   } catch (err) {
     console.error("Error login:", err)
+    alert("Error al iniciar sesión. Verifique sus credenciales")
   }
 }
 </script>

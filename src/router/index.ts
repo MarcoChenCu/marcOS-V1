@@ -8,20 +8,47 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'Ecommerce',
+      redirect: '/dashboard', // Redirige condicionalmente al dashboard
+    },
+
+    {
+      path: '/signin',
+      name: 'Signin',
+      component: () => import('../views/Auth/Signin.vue'),
+      meta: {
+        title: 'Iniciar sesión',
+        guestOnly: true,
+      },
+    },
+
+    {
+      path: '/dashboard',
+      name: 'Dashboard',
       component: () => import('../views/Ecommerce.vue'),
       meta: {
-        title: 'eCommerce Dashboard',
+        title: 'Dashboard',
+        requiresAuth: true,
       },
     },
+
     {
-      path: '/calendar',
-      name: 'Calendar',
-      component: () => import('../views/Others/Calendar.vue'),
+      path: '/blank',
+      name: 'Blank',
+      component: () => import('../views/Pages/BlankPage.vue'),
       meta: {
-        title: 'Calendar',
+        title: 'Blank',
       },
     },
+
+    {
+      path: '/error-404',
+      name: '404 Error',
+      component: () => import('../views/Errors/FourZeroFour.vue'),
+      meta: {
+        title: '404 Error',
+      },
+    },
+    
     {
       path: '/profile',
       name: 'Profile',
@@ -30,12 +57,21 @@ const router = createRouter({
         title: 'Profile',
       },
     },
+
     {
       path: '/form-elements',
       name: 'Form Elements',
       component: () => import('../views/Forms/FormElements.vue'),
       meta: {
         title: 'Form Elements',
+      },
+    },
+    {
+      path: '/calendar',
+      name: 'Calendar',
+      component: () => import('../views/Others/Calendar.vue'),
+      meta: {
+        title: 'Calendar',
       },
     },
     {
@@ -106,32 +142,8 @@ const router = createRouter({
         title: 'Videos',
       },
     },
-    {
-      path: '/blank',
-      name: 'Blank',
-      component: () => import('../views/Pages/BlankPage.vue'),
-      meta: {
-        title: 'Blank',
-      },
-    },
-
-    {
-      path: '/error-404',
-      name: '404 Error',
-      component: () => import('../views/Errors/FourZeroFour.vue'),
-      meta: {
-        title: '404 Error',
-      },
-    },
-
-    {
-      path: '/signin',
-      name: 'Signin',
-      component: () => import('../views/Auth/Signin.vue'),
-      meta: {
-        title: 'Signin',
-      },
-    },
+    
+    /*
     {
       path: '/signup',
       name: 'Signup',
@@ -140,12 +152,42 @@ const router = createRouter({
         title: 'Signup',
       },
     },
+    */
   ],
 })
 
-export default router
+//Guard de navegacion global
 
 router.beforeEach((to, from, next) => {
+  //Actualizar titulo del documento
   document.title = `marcOS | ${to.meta.title}`
+
+  // Obtener estado de sesión (de localStorage)
+  const isAuthenticated = localStorage.getItem('token') !== null
+  //const token = localStorage.getItem("token")
+
+   // 🔹 Controlar la ruta raíz
+  if (to.path === '/') {
+    if (isAuthenticated) {
+      return next('/dashboard')
+    } else {
+      return next('/signin')
+    }
+  }
+
+  
+  // 🔹 Rutas que requieren autenticación
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    return next('/signin')
+  }
+
+  // 🔹 Rutas solo para invitados (signin, signup)
+  if (to.meta.guestOnly && isAuthenticated) {
+    return next('/dashboard')
+  }
+
+  // Continuar normalmente
   next()
 })
+
+export default router
