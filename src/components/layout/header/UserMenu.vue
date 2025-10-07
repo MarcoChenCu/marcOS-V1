@@ -6,6 +6,7 @@
     >
       <span class="mr-3 overflow-hidden rounded-full h-10 w-10">
         <img src="/images/user/user-profile.png" alt="User" />
+        <!-- User profile icons created by lakonicon href="https://www.flaticon.com/free-icons/user-profile" -->
       </span>
 
       <span class="block mr-1 font-medium text-theme-sm">{{ user }}</span>

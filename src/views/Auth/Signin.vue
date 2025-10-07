@@ -197,7 +197,8 @@ import axios from "axios"
 // }
 const handleSubmit = async () => {
   try {
-    const response = await axios.post("http://localhost:3000/api/login", {
+  const apiURL = import.meta.env.VITE_API_URL
+    const response = await axios.post("http://192.168.0.9:3000/api/login", {
       user: user.value,
       password: password.value,
       keepLoggedIn: keepLoggedIn.value,
@@ -207,9 +208,9 @@ const handleSubmit = async () => {
       localStorage.setItem("user", response.data.user)
       //redirigir al dashboard      
       console.log("res:",response.data)
-      //window.location.href = "/dashboard"
+      window.location.href = "/dashboard"
     } else {
-      alert("Credenciales incorrectas")
+      alert(response.data.message)
     }
   } catch (err) {
     console.error("Error login:", err)

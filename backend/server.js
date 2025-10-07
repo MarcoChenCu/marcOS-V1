@@ -1,28 +1,3 @@
-/*
-import express from "express"
-import bodyParser from "body-parser"
-import cors from "cors"
-
-const app = express()
-
-// 🔧 Permitir solicitudes desde el frontend
-app.use(cors({
-  origin: "http://localhost:5173", // o el puerto real donde corre tu Vue
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}))
-
-app.use(bodyParser.json())
-
-app.get("/", (req, res) => {
-  res.send("Servidor backend funcionando 🚀")
-})
-
-app.listen(3000, () => {
-  console.log("Servidor backend escuchando en http://localhost:3000")
-})
-*/
-
 import express from "express"
 import cors from "cors"
 import bodyParser from "body-parser"
@@ -35,7 +10,8 @@ const SECRET_KEY = "2c2e693a7c007d6b50a3e1ae55d652c8be8aeba0adba9209f3153e8b2d26
 
 
 const app = express()
-app.use(cors({ origin: "http://localhost:5173", credentials: true }))
+//app.use(cors({ origin: "http://localhost:5173", credentials: true })) //pruebas Ubuntu Desktop
+app.use(cors({ origin: true, credentials: true })) // Pruebas Ubuntu Server
 app.use(bodyParser.json())
 
 app.post("/api/login", (req, res) => {
