@@ -45,8 +45,18 @@ import LayoutDashboardIcon from "./LayoutDashboardIcon.vue";
 import UserGroupIcon from "./UserGroupIcon.vue";
 import BellIcon from "./BellIcon.vue";
 import BarChartIcon from "./BarChartIcon.vue";
+import TerminalIcon from "./TerminalIcon.vue"
+import NetworkIcon from "./NetworkIcon.vue"
+import FileExplorerIcon from "./FileExplorerIcon.vue"
+import UpdateIcon from "./UpdateIcon.vue"
+import CPUIcon from "./CPUIcon.vue"
 
 export {
+  CPUIcon,
+  TerminalIcon,
+  NetworkIcon,
+  FileExplorerIcon,
+  UpdateIcon,
   BellIcon,
   BarChartIcon,
   LayoutDashboardIcon,

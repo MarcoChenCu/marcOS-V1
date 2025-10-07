@@ -205,8 +205,7 @@
             </ul>
           </div>
         </div>
-      </nav>
-      <SidebarWidget v-if="isExpanded || isHovered || isMobileOpen" />
+      </nav>      
     </div>
   </aside>
 </template>
@@ -217,20 +216,18 @@ import { useRoute } from "vue-router";
 
 import {
   GridIcon,
-  CalenderIcon,
-  UserCircleIcon,
-  ChatIcon,
-  MailIcon,
-  DocsIcon,
+  UserGroupIcon,
   PieChartIcon,
   ChevronDownIcon,
   HorizontalDots,
   PageIcon,
   TableIcon,
   ListIcon,
-  PlugInIcon,
+  TerminalIcon,
+  NetworkIcon,
+  FileExplorerIcon,
+  UpdateIcon,
 } from "../../icons";
-import SidebarWidget from "./SidebarWidget.vue";
 import BoxCubeIcon from "@/icons/BoxCubeIcon.vue";
 import { useSidebar } from "@/composables/useSidebar";
 
@@ -245,16 +242,39 @@ const menuGroups = [
       {
         icon: GridIcon,
         name: "Dashboard",
-        subItems: [{ name: "Ecommerce", path: "/", pro: false }],
+        path: "/",
       },
       {
-        icon: CalenderIcon,
-        name: "Calendar",
-        path: "/calendar",
+        icon: NetworkIcon,
+        name: "Redes",
+        subItems: [
+          { name: "Configuración", path: "/blank", pro: false },
+          { name: "Firewall", path: "/error-404", pro: false },
+        ],
       },
       {
-        icon: UserCircleIcon,
-        name: "User Profile",
+        icon: UserGroupIcon,
+        name: "Usuarios",
+        path: "/profile",
+      },
+      {
+        icon: FileExplorerIcon,
+        name: "Explorador de archivos",
+        path: "/profile",
+      },
+      {
+        icon: TerminalIcon,
+        name: "terminal",
+        path: "/profile",
+      },
+      {
+        icon: UpdateIcon,
+        name: "Actualizaciones",
+        path: "/profile",
+      },
+      {
+        icon: BoxCubeIcon,
+        name: "Aplicaciones",
         path: "/profile",
       },
 
@@ -281,8 +301,13 @@ const menuGroups = [
     ],
   },
   {
-    title: "Others",
+    title: "Otros",
     items: [
+      {
+        name: "Registros",
+        icon: ListIcon,
+        path: "/",
+      },
       {
         icon: PieChartIcon,
         name: "Charts",
@@ -301,14 +326,6 @@ const menuGroups = [
           { name: "Buttons", path: "/buttons", pro: false },
           { name: "Images", path: "/images", pro: false },
           { name: "Videos", path: "/videos", pro: false },
-        ],
-      },
-      {
-        icon: PlugInIcon,
-        name: "Authentication",
-        subItems: [
-          { name: "Signin", path: "/signin", pro: false },
-          { name: "Signup", path: "/signup", pro: false },
         ],
       },
       // ... Add other menu items here

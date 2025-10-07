@@ -175,46 +175,41 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import CommonGridShape from '@/components/common/CommonGridShape.vue'
-import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
-const user = ref('')
-const password = ref('')
-const showPassword = ref(false)
-const keepLoggedIn = ref(false)
+  import { ref } from 'vue'
+  import CommonGridShape from '@/components/common/CommonGridShape.vue'
+  import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
+  const user = ref('')
+  const password = ref('')
+  const showPassword = ref(false)
+  const keepLoggedIn = ref(false)
 
-const togglePasswordVisibility = () => {
-  showPassword.value = !showPassword.value
-}
-import axios from "axios"
-// const handleSubmit = () => {
-//   // Handle form submission
-//   console.log('Form submitted', {
-//     user: user.value,
-//     password: password.value,
-//     keepLoggedIn: keepLoggedIn.value,
-//   })
-// }
-const handleSubmit = async () => {
-  try {
-  const apiURL = import.meta.env.VITE_API_URL
-    const response = await axios.post("http://192.168.0.9:3000/api/login", {
-      user: user.value,
-      password: password.value,
-      keepLoggedIn: keepLoggedIn.value,
-    })
-    if (response.data.success) {
-      localStorage.setItem("token", response.data.token)
-      localStorage.setItem("user", response.data.user)
-      //redirigir al dashboard      
-      console.log("res:",response.data)
-      window.location.href = "/dashboard"
-    } else {
-      alert(response.data.message)
-    }
-  } catch (err) {
-    console.error("Error login:", err)
-    alert("Error al iniciar sesión. Verifique sus credenciales")
+  const togglePasswordVisibility = () => {
+    showPassword.value = !showPassword.value
   }
-}
+  
+  import axios from "axios"
+
+  const handleSubmit = async () => {
+    try {
+    const apiURL = import.meta.env.VITE_API_URL
+      const response = await axios.post("http://192.168.0.9:3000/api/login", {
+      //const response = await axios.post("http://localhost:3000/api/login", {
+        user: user.value,
+        password: password.value,
+        keepLoggedIn: keepLoggedIn.value,
+      })
+      if (response.data.success) {
+        localStorage.setItem("token", response.data.token)
+        localStorage.setItem("user", response.data.user)
+        //redirigir al dashboard      
+        console.log("res:",response.data)
+        window.location.href = "/dashboard"
+      } else {
+        alert(response.data.message)
+      }
+    } catch (err) {
+      console.error("Error login:", err)
+      alert("Error al iniciar sesión. Verifique sus credenciales")
+    }
+  }
 </script>
