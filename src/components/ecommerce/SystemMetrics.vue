@@ -1,8 +1,21 @@
-<script setup>
-defineProps({
-  title: String,
-  description: String,
-  value: Number,
+<script setup lang="ts">
+import { defineProps, computed } from "vue";
+
+const props = defineProps({
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  icon: { type: Object, required: true }, // componente de icono
+  value: { type: Number, required: true }, // porcentaje o métrica numérica
+});
+// Computa la clase según el valor
+const valueColorClass = computed(() => {
+  if (props.value < 60) {
+    return 'bg-success-50 text-success-600 dark:bg-success-500/15 dark:text-success-500'
+  } else if (props.value < 85) {
+    return 'bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-500'
+  } else {
+    return 'bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-500'
+  }
 })
 </script>
 
@@ -14,8 +27,8 @@ defineProps({
         <slot name="icon"/>
       </div>
 
-      <span
-        class="flex items-center gap-1 rounded-full py-0.5 pl-2 pr-2.5 text-lg font-medium"
+      <span 
+        class="flex items-center gap-1 rounded-full py-0.5 pl-2 pr-2.5 text-sm font-medium"
         :class="valueColorClass"
       >
         {{ value }}%
