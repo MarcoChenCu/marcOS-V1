@@ -3,9 +3,9 @@ import { defineProps, computed } from "vue";
 
 const props = defineProps({
   title: { type: String, required: true },
-  description: { type: String, required: true },
-  icon: { type: Object, required: true }, // componente de icono
+  description: { type: String, required: true },  
   value: { type: Number, required: true }, // porcentaje o métrica numérica
+  unit: {type: String}
 });
 // Computa la clase según el valor
 const valueColorClass = computed(() => {
@@ -31,7 +31,7 @@ const valueColorClass = computed(() => {
         class="flex items-center gap-1 rounded-full py-0.5 pl-2 pr-2.5 text-sm font-medium"
         :class="valueColorClass"
       >
-        {{ value }}%
+        {{ value }}{{ unit ? unit : '' }}
       </span>
     </div>
 

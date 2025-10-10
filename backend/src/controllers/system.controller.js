@@ -11,7 +11,7 @@ export const getSystemInfo = async (req, res) => {
     ])
 
     // ✅ Validar datos
-    const cpuUsage = cpuLoad?.currentload ?? 0
+    const cpuUsage = cpuLoad?.currentLoad ?? 0
     const cpuTemp = tempData?.main ?? null
 
     const totalStorage = diskData?.reduce((acc, disk) => acc + (disk.size || 0), 0) || 0
@@ -22,16 +22,19 @@ export const getSystemInfo = async (req, res) => {
       cpu: {
         model: cpuData?.brand || "Desconocido",
         usage: parseFloat(cpuUsage.toFixed(1)),
+        cores: cpuData?.cores || 1,
+        speed: cpuData?.speedMax,
         temperature: cpuTemp,
       },
       memory: {
-        total: parseFloat((memData?.total / (1024 ** 2) || 0).toFixed(0)), // MB
-        used: parseFloat((memData?.active / (1024 ** 2) || 0).toFixed(0)),
+        total: parseFloat((memData?.total / (1024 ** 3) || 0).toFixed(2)), // GB
+        used: parseFloat((memData?.active / (1024 ** 3) || 0).toFixed(2)),
         percent: memData?.total ? parseFloat(((memData.active / memData.total) * 100).toFixed(1)) : 0,
       },
       storage: {
-        total: parseFloat((totalStorage / (1024 ** 2)).toFixed(0)), // MB
-        used: parseFloat((usedStorage / (1024 ** 2)).toFixed(0)),
+        //device: diskLayout[0]?.device || 'Desconocido',
+        total: parseFloat((totalStorage / (1024 ** 3)).toFixed(2)), // GB
+        used: parseFloat((usedStorage / (1024 ** 3)).toFixed(2)),
         percent: parseFloat(storagePercent.toFixed(1)),
       },
     })
