@@ -11,8 +11,8 @@
         </div>
         
       </div>
-      <div>
-          <h3 class="text-md font-semibold text-gray-800 dark:text-white/90">Sistema operativo:</h3>
+      <div class="flex items-left vertical mt-2">
+          <h3 class="text-md font-semibold text-gray-800 dark:text-white/90">Sistema operativo:&nbsp;</h3>
           <p class="text-md mt-1 text-gray-500 text-theme-sm dark:text-gray-400">ubuntu 22.04</p>
         </div>
       <div class="relative max-h-[195px]">
