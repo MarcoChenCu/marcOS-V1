@@ -5,7 +5,7 @@ const props = defineProps({
   title: { type: String, required: true },
   description: { type: String, required: true },  
   value: { type: Number, required: true }, // porcentaje o métrica numérica
-  unit: {type: String}
+  unit: {type: String},
 });
 // Computa la clase según el valor
 const valueColorClass = computed(() => {

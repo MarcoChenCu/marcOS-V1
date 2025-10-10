@@ -50,7 +50,7 @@
         </div>
       </div>
       <div class="col-span-12 xl:col-span-5">
-        <monthly-sale />
+        <SystemInfo />
       </div>
 
       <div class="col-span-12">
@@ -72,8 +72,7 @@
 import AdminLayout from '../components/layout/AdminLayout.vue'
 import EcommerceMetrics from '../components/ecommerce/EcommerceMetrics.vue'
 import SystemMetrics from '@/components/ecommerce/SystemMetrics.vue'
-import MonthlyTarget from '../components/ecommerce/MonthlySale.vue'
-import MonthlySale from '../components/ecommerce/MonthlyTarget.vue'
+import SystemInfo from '../components/ecommerce/SystemInfo.vue'
 import CustomerDemographic from '../components/ecommerce/CustomerDemographic.vue'
 import StatisticsChart from '../components/ecommerce/StatisticsChart.vue'
 import RecentOrders from '../components/ecommerce/RecentOrders.vue'
@@ -84,8 +83,7 @@ export default {
     AdminLayout,
     EcommerceMetrics,
     SystemMetrics,
-    MonthlyTarget,
-    MonthlySale,
+    SystemInfo,
     CustomerDemographic,
     StatisticsChart,
     RecentOrders,
