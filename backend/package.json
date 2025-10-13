@@ -13,12 +13,14 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@xterm/xterm": "^5.5.0",
     "authenticate-pam": "^1.0.5",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "systeminformation": "^5.27.11"
+    "systeminformation": "^5.27.11",
+    "vue-command": "^35.2.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
