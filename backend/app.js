@@ -4,6 +4,7 @@ import bodyParser from "body-parser"
 import authRoutes from "./src/routes/auth.routes.js"
 import dashboardRoutes from "./src/routes/dashboard.routes.js"
 import systemRoutes from "./src/routes/system.routes.js"
+import processRoutes from "./src/routes/process.routes.js"
 
 const app = express()
 
@@ -15,6 +16,7 @@ app.use(bodyParser.json())
 app.use("/api", authRoutes)
 app.use("/api", dashboardRoutes)
 app.use("/api", systemRoutes)
+app.use("/api", processRoutes)
 
 // Middleware para 404
 app.use((req, res) => {
