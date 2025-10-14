@@ -32,6 +32,24 @@ const router = createRouter({
     },
 
     {
+      path: '/network_config',
+      name: 'Network',
+      component: () => import('../views/Network/NetworkConf.vue'),
+      meta: {
+        title: 'Configuración de Red',
+      },
+    },
+
+    {
+      path: '/firewall',
+      name: 'Firewall1',
+      component: () => import('../views/Network/Firewall.vue'),
+      meta: {
+        title: 'Firewall',
+      },
+    },
+
+    {
       path: '/terminal',
       name: 'Terminal',
       component: () => import('../views/General/Terminal.vue'),
@@ -41,11 +59,47 @@ const router = createRouter({
     },
 
     {
+      path: '/file_explorer',
+      name: 'File Explorer',
+      component: () => import('../views/General/FileExplorer.vue'),
+      meta: {
+        title: 'Explorador de archivos',
+      },
+    },
+
+    {
+      path: '/updates',
+      name: 'Updates',
+      component: () => import('../views/General/Updates.vue'),
+      meta: {
+        title: 'Actualizaciones',
+      },
+    },
+
+    {
+      path: '/apps',
+      name: 'Apps',
+      component: () => import('../views/General/Apps.vue'),
+      meta: {
+        title: 'Aplicaciones',
+      },
+    },
+
+    {
       path: '/processes',
       name: 'Procesos',
       component: () => import('../views/General/Processes.vue'),
       meta: {
         title: 'Procesos',
+      },
+    },
+
+    {
+      path: '/logs',
+      name: 'Logs',
+      component: () => import('../views/General/Logs.vue'),
+      meta: {
+        title: 'Registros',
       },
     },
 

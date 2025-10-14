@@ -249,8 +249,8 @@ const menuGroups = [
         icon: NetworkIcon,
         name: "Redes",
         subItems: [
-          { name: "Configuración", path: "/blank", pro: false },
-          { name: "Firewall", path: "/error-404", pro: false },
+          { name: "Configuración", path: "/network_config", pro: false },
+          { name: "Firewall", path: "/firewall", pro: false },
         ],
       },
       {
@@ -261,7 +261,7 @@ const menuGroups = [
       {
         icon: FileExplorerIcon,
         name: "Explorador de archivos",
-        path: "/profile",
+        path: "/file_explorer",
       },
       {
         icon: TerminalIcon,
@@ -271,7 +271,7 @@ const menuGroups = [
       {
         icon: UpdateIcon,
         name: "Actualizaciones",
-        path: "/profile",
+        path: "/updates",
       },
       {
         icon: ProcessIcon,
@@ -281,7 +281,7 @@ const menuGroups = [
       {
         icon: BoxCubeIcon,
         name: "Aplicaciones",
-        path: "/profile",
+        path: "/apps",
       },
 
       {
@@ -312,7 +312,7 @@ const menuGroups = [
       {
         name: "Registros",
         icon: ListIcon,
-        path: "/",
+        path: "/logs",
       },
       {
         icon: PieChartIcon,

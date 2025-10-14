@@ -58,7 +58,8 @@
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-              ><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/></svg>
+              ><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/>
+            </svg>
             </template>
           </SystemMetrics>
 
@@ -164,7 +165,7 @@ async function loadMetrics() {
     const res = await fetch(`${apiURL}/api/system`)
     const data = await res.json()
     metrics.value = data
-    console.log(metrics.value)
+    //console.log(metrics.value)
   } catch (err) {
     console.error("Error al obtener métricas:", err)
   }
@@ -172,7 +173,7 @@ async function loadMetrics() {
     const res = await fetch(`${apiURL}/api/process`)
     const data = await res.json()
     processes.value = data
-    console.log(processes.value)
+    //console.log(processes.value)
   } catch (err) {
     console.error("Error al obtener los procesos:", err)
   }

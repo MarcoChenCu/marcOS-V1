@@ -76,7 +76,7 @@ export const getSystemInfo = async (req, res) => {
         interface: networkInfo?.[1].iface || 'Desconocido', 
         ip: networkInfo?.[1]?.ip4 || '',
         mac: networkInfo?.[1]?.mac || '',
-        //bytesUp: parseFloat((networkStats[0].rx_bytes, / 1000).toFixed(1)),
+        networkInfo: networkInfo,        
         bytesDown: 25,
         bytesUp: networkStats[0]?.dropped,
 
