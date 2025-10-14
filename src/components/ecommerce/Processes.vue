@@ -8,9 +8,8 @@
       </div>
 
       <div class="flex items-center gap-3">
-        <button
-          class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
-        >
+        <!--
+        <button class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
           <svg
             class="stroke-current fill-white dark:fill-gray-800"
             width="20"
@@ -48,9 +47,11 @@
           </svg>
           Filtros
         </button>
-
+        -->
+        
         <button
           class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
+          value="/processes"
         >
           Ver todos
         </button>
@@ -83,27 +84,26 @@
         </thead>
         <tbody>
           <tr
-            v-for="(process, index) in processes"
-            :key="index"
-            class="border-t border-gray-100 dark:border-gray-800"
-          >
+            v-for="(process, index) in visibleProcesses"
+            :key="process.pid"
+            class="border-t border-gray-100 dark:border-gray-800">
             <td class="py-3 whitespace-nowrap">
-              <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ process.list[0].pid }}</p>
+              <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ process.pid }}</p>
             </td>
             <td class="py-3 whitespace-nowrap">
-              <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ processes.list[0].name }}</p>
+              <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ process.name }}</p>
             </td>
             <td class="py-3 whitespace-nowrap">
-              <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ processes.list[0].command }}</p>
+              <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ process.command }}</p>
             </td>
             <td class="py-3 whitespace-nowrap">
-              <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ processes.list[0].user }}</p>
+              <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ process.user }}</p>
             </td>
             <td class="py-3 whitespace-nowrap">
-              <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ processes.list[0].mem }}%</p>
+              <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ process.mem }}%</p>
             </td>
             <td class="py-3 whitespace-nowrap">
-              <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ processes.list[0].cpu.toFixed(1) }}</p>
+              <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ process.cpu.toFixed(1) }}</p>
             </td>
           </tr>
         </tbody>
@@ -113,17 +113,24 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps({
   processes: {
     type: Object,
-    default: {}
+    required: true
   },
-  products: {
-    type: Object,
-    default: {}
-  },
+  limit: {
+    type: [Number, String],
+    default: 'all' // Puede ser un número o la palabra 'all'
+  }
 })
 
+// Si el valor de limit es un número, tomamos solo esa cantidad de procesos
+// Si es 'all', mostramos todos los procesos
+const visibleProcesses = computed(() => {
+  if (!props.processes?.list) return []
+  if (props.limit === 'all') return props.processes.list
+  return props.processes.list.slice(0, props.limit)
+})
 </script>

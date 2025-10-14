@@ -227,6 +227,7 @@ import {
   NetworkIcon,
   FileExplorerIcon,
   UpdateIcon,
+  ProcessIcon,
 } from "../../icons";
 import BoxCubeIcon from "@/icons/BoxCubeIcon.vue";
 import { useSidebar } from "@/composables/useSidebar";
@@ -271,6 +272,11 @@ const menuGroups = [
         icon: UpdateIcon,
         name: "Actualizaciones",
         path: "/profile",
+      },
+      {
+        icon: ProcessIcon,
+        name: "Procesos/Servicios",
+        path: "/processes",
       },
       {
         icon: BoxCubeIcon,

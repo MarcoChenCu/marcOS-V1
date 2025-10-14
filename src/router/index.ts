@@ -41,6 +41,15 @@ const router = createRouter({
     },
 
     {
+      path: '/processes',
+      name: 'Procesos',
+      component: () => import('../views/General/Processes.vue'),
+      meta: {
+        title: 'Procesos',
+      },
+    },
+
+    {
       path: '/error-404',
       name: '404 Error',
       component: () => import('../views/Errors/FourZeroFour.vue'),

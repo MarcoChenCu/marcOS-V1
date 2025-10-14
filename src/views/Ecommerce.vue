@@ -114,7 +114,7 @@
 
       <div class="col-span-12">
         <Processes
-          :processes="processes.processesData"
+          :processes="processes.processesData" :limit="10"
          />
       </div>
     </div>
@@ -155,7 +155,7 @@ const processes = ref({})
 
 onMounted(() => {
   loadMetrics()
-  //setInterval(loadMetrics, 1000)
+  setInterval(loadMetrics, 1000)
 })
 
 const apiURL = import.meta.env.VITE_API_URL

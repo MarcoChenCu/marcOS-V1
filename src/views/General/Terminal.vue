@@ -21,11 +21,15 @@
   </AdminLayout>
 </template>
 
-<script>
-import { ref, onMounted } from "vue";
+<script setup>
+import { ref } from "vue";
 import AdminLayout from "@/components/layout/AdminLayout.vue";
 import PageBreadcrumb from "@/components/common/PageBreadcrumb.vue";
 
+const currentPageTitle = ref("Terminal");
+</script>
+
+<script>
 import VueCommand, { createStdout } from "vue-command";
 import "vue-command/dist/vue-command.css";
 
@@ -36,15 +40,21 @@ export default {
 
   data: () => ({
     commands: {
-      "hello-world": () => createStdout("Hello world"),
-    },
+  run: async (args) => {
+    const cmd = args.join(" ");
+    const res = await fetch("http://localhost:3000/api/terminal", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ command: cmd }),
+    });
+
+    const data = await res.json();
+    return createStdout(data.output || data.error);
+  },
+},
+
   }),
 };
-
-const currentPageTitle = ref("Terminal");
-
-//source: https://github.com/ndabAP/vue-command
-
 </script>
 
 <style>

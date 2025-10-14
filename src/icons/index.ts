@@ -50,6 +50,7 @@ import NetworkIcon from "./NetworkIcon.vue"
 import FileExplorerIcon from "./FileExplorerIcon.vue"
 import UpdateIcon from "./UpdateIcon.vue"
 import CPUIcon from "./CPUIcon.vue"
+import ProcessIcon from "./ProcessIcon.vue"
 
 export {
   CPUIcon,
@@ -57,6 +58,7 @@ export {
   NetworkIcon,
   FileExplorerIcon,
   UpdateIcon,
+  ProcessIcon,
   BellIcon,
   BarChartIcon,
   LayoutDashboardIcon,
