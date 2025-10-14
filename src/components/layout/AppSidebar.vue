@@ -265,7 +265,7 @@ const menuGroups = [
       {
         icon: TerminalIcon,
         name: "terminal",
-        path: "/profile",
+        path: "/terminal",
       },
       {
         icon: UpdateIcon,

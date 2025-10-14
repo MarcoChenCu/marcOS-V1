@@ -32,11 +32,11 @@ const router = createRouter({
     },
 
     {
-      path: '/blank',
-      name: 'Blank',
-      component: () => import('../views/Pages/BlankPage.vue'),
+      path: '/terminal',
+      name: 'Terminal',
+      component: () => import('../views/General/Terminal.vue'),
       meta: {
-        title: 'Blank',
+        title: 'Terminal',
       },
     },
 
@@ -107,7 +107,7 @@ const router = createRouter({
       meta: {
         title: 'Avatars',
       },
-    },
+    },    
     {
       path: '/badge',
       name: 'Badge',
