@@ -12,37 +12,54 @@
       <!--Componentes de interfaces-->
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">  
          <!--Componente de la informacion de interfaz-->
-      <div  
-        v-for="(interfacess, index) in network"
-        :key="interface.ifaceName"
-        class="px-5 pt-5 bg-white shadow-default rounded-2xl pb-7 dark:bg-gray-900 sm:px-6 sm:pt-6">
-          <div class="flex justify-between">
-            <div>
-              <h4 class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">{{ network[0].ifaceName || 'Desconocido' }}</h4>
-            </div> 
-          </div>
+        <div 
+        v-for="(interfaceInfo, index) in network"
+        :key="interfaceInfo.ifaceName"
+        class="rounded-2xl border border-gray-200 bg-gray-100 dark:border-gray-800 dark:bg-white/[0.03]">
+        <div  class="px-5 pt-5 bg-white shadow-default rounded-2xl pb-7 dark:bg-gray-900 sm:px-6 sm:pt-6">
+            <div class="flex justify-between">
+              <div>
+                <h4 class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">{{ interfaceInfo.ifaceName || 'Desconocido' }}</h4>
+              </div> 
+            </div>
+        
+            <div class="flex items-center mt-2">
+              <h3 class="text-md font-semibold text-gray-800 dark:text-white/90">DHCP:&nbsp;</h3>
+              <p class="text-md text-gray-500 text-theme-sm dark:text-gray-400">{{ interfaceInfo.dhcp }}</p>
+            </div>
 
-          <div class="flex items-center mt-2">
-            <h3 class="text-md font-semibold text-gray-800 dark:text-white/90">DHCP:&nbsp;</h3>
-            <p class="text-md text-gray-500 text-theme-sm dark:text-gray-400">{{ network[0].dhcp || false }}</p>
-          </div>
+            <div class="flex items-center mt-2">
+              <h3 class="text-md font-semibold text-gray-800 dark:text-white/90">Tipo:&nbsp;</h3>
+              <p class="text-md text-gray-500 text-theme-sm dark:text-gray-400">{{ interfaceInfo.type }}</p>
+            </div>
 
-          <div class="flex items-center mt-2">
-            <h3 class="text-md font-semibold text-gray-800 dark:text-white/90">IPv4:&nbsp;</h3>
-            <p class="text-md text-gray-500 text-theme-sm dark:text-gray-400">{{ network[0].ip4 || false }}</p>
-          </div>
+            <div class="flex items-center mt-2">
+              <h3 class="text-md font-semibold text-gray-800 dark:text-white/90">IPv4:&nbsp;</h3>
+              <p class="text-md text-gray-500 text-theme-sm dark:text-gray-400">{{ interfaceInfo.ip4 || '' }}</p>
+            </div>
+        
+            <div class="flex items-center mt-2">
+              <h3 class="text-md font-semibold text-gray-800 dark:text-white/90">Máscara de subred IPv4:&nbsp;</h3>
+              <p class="text-md text-gray-500 text-theme-sm dark:text-gray-400">{{ interfaceInfo.ip4subnet || '' }}</p>
+            </div>
 
-          <div class="flex items-center mt-2">
-            <h3 class="text-md font-semibold text-gray-800 dark:text-white/90">Dirección MAC:&nbsp;</h3>
-            <p class="text-md text-gray-500 text-theme-sm dark:text-gray-400">{{ network[0].mac || false }}</p>
-          </div>
+            <div class="flex items-center mt-2">
+              <h3 class="text-md font-semibold text-gray-800 dark:text-white/90">Dirección MAC:&nbsp;</h3>
+              <p class="text-md text-gray-500 text-theme-sm dark:text-gray-400">{{ interfaceInfo.mac || '' }}</p>
+            </div>
 
-          <div class="flex items-center mt-2">
-            <h3 class="text-md font-semibold text-gray-800 dark:text-white/90">IPv6:&nbsp;</h3>
-            <p class="text-md text-gray-500 text-theme-sm dark:text-gray-400">{{ network[0].ip6 || false }}</p>
-          </div>
+            <div class="flex items-center mt-2">
+              <h3 class="text-md font-semibold text-gray-800 dark:text-white/90">IPv6:&nbsp;</h3>
+              <p class="text-md text-gray-500 text-theme-sm dark:text-gray-400">{{ interfaceInfo.ip6 || '' }}</p>
+            </div>
 
+            <div class="flex items-center mt-2">
+              <h3 class="text-md font-semibold text-gray-800 dark:text-white/90">Máscara de subred IPv6:&nbsp;</h3>
+              <p class="text-md text-gray-500 text-theme-sm dark:text-gray-400">{{ interfaceInfo.ip6subnet || '' }}</p>
+            </div>        
+          </div>
         </div>
+        <!--Fin interfaces-->
       </div>
     </div>
   </AdminLayout>
