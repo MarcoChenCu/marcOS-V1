@@ -40,6 +40,12 @@
         <div>{{ copyStatus }}</div>
       </button>
     </div>
+    <label
+      v-if="title"
+      class="mb-1.5 block text-sm font-medium text-gray-400 dark:text-gray-600"
+    >
+      {{ comment }}
+    </label>
   </div>
 </template>
 
@@ -54,7 +60,12 @@ const props = defineProps({
   text: {
     type: String,
     default: ""
+  },
+  comment:{
+    type: String,
+    default: ""
   }
+
 })
 
 const copyStatus = ref("Copiar")
