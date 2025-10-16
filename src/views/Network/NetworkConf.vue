@@ -1,6 +1,7 @@
 <template>
   <AdminLayout>
-  <PageBreadcrumb :pageTitle="currentPageTitle" />
+    <PageBreadcrumb :pageTitle="currentPageTitle" />
+    <!--Contenedor principal-->
     <div class="rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12 mb-6">
       <h3 class="mb-4 font-semibold text-gray-800 text-theme-xl dark:text-white/90 sm:text-2xl">
         Interfaces
@@ -11,7 +12,7 @@
       </p>      
       <!--Componentes de interfaces-->
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 mt-2">  
-         <!--Componente de la informacion de interfaz-->
+       <!--Componente de la informacion de interfaz-->
         <div 
           v-for="(interfaceInfo, index) in network"
           :key="interfaceInfo.ifaceName"
@@ -85,7 +86,7 @@
 
       <div class="mx-auto w-full max-w-[630px] text-center mt-4 mb-4">
         <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-          Ejemplo archivo de configuración
+          Archivo en /etc/netplan/50-cloud-init.yaml
         </label>
         <!--Ejemplo-->
         <textarea        
@@ -99,12 +100,15 @@
         match:
           macaddress: 00:11:22:33:44:55
         set-name: eth_lan0"        
-          rows="6"
-          disabled
+          rows="6"      
+          spellcheck="false"              
           class="min-h-54 dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:shadow-focus-ring focus:outline-hidden focus:ring-0 disabled:border-gray-100 disabled:bg-gray-50 disabled:placeholder:text-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 dark:disabled:border-gray-800 dark:disabled:bg-white/[0.03] dark:disabled:placeholder:text-white/15"
-        ></textarea>      
+        ></textarea> 
+        <div class="mx-auto w-full max-w-[630px] text-center mt-4 mb-4">
+          <Button class="mr-2" variant="primary" size="md">Guardar</Button>
+          <Button variant="error" size="md">Cancelar</Button>
+        </div>
     </div>
-    
       <!--Titulo--> 
       <h3 class="mb-4 mt-4 font-semibold text-gray-800 text-theme-xl dark:text-white/90 sm:text-2xl">
         Configuración desde la terminal
@@ -130,32 +134,34 @@
         />
       </div>   
       <!-- Ejemplo archivo netplan -->
-      <div class="mx-auto w-full max-w-[630px] text-center mt-4 mb-4">
+      <div class="mx-auto w-full max-w-[700px] text-center mt-4 mb-4">
         <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
           Ejemplo archivo de configuración
         </label>
-        <!--Ejemplo-->
+        <!--Contenido del archivo netplan-->
         <textarea        
           placeholder="Enter a description..."
           value="network:
   version: 2
-  renderer: networkd
   ethernets:
     eth_lan0:
       dhcp4: true
-        match:
-          macaddress: 00:11:22:33:44:55
-        set-name: eth_lan0"        
+      addresses:
+        - 192.168.0.100/24          
+        gateway4: 192.168.0.1
+        nameservers:
+        addresses:
+          - 8.8.8.8"
           rows="6"
           disabled
           class="min-h-54 dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:shadow-focus-ring focus:outline-hidden focus:ring-0 disabled:border-gray-100 disabled:bg-gray-50 disabled:placeholder:text-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 dark:disabled:border-gray-800 dark:disabled:bg-white/[0.03] dark:disabled:placeholder:text-white/15"
         ></textarea>
-      <label class="mb-1.5 block text-sm font-medium text-gray-400 dark:text-gray-600">
-        *La sintaxis de YAML depende en gran medida del uso de sangrías y del número de espacios para representar la estructura de los datos. Si el formato no se aplica correctamente las configuración de red no se aplicará.
-      </label>
-      <a class="underline cursor-pointer text-brand-500" href="https://documentation.ubuntu.com/server/explanation/networking/configuring-networks/">Configuración de red Ubuntu Server</a>
-    </div>
-    </div>
+        <label class="mb-1.5 block text-sm font-medium text-gray-400 dark:text-gray-600">
+          *La sintaxis de YAML depende en gran medida del uso de sangrías y del número de espacios para representar la estructura de los datos. Si el formato no se aplica correctamente las configuración de red no se aplicará.
+        </label>
+        <a class="underline cursor-pointer text-brand-500" href="https://documentation.ubuntu.com/server/explanation/networking/configuring-networks/">Configuración de red Ubuntu Server</a>
+      </div><!--Ejemplo archivo netplan-->
+    </div><!--Fin configuracion archivo de red-->
   </AdminLayout>
 </template>
 
@@ -163,6 +169,7 @@
 import AdminLayout from "@/components/layout/AdminLayout.vue";
 import PageBreadcrumb from "@/components/common/PageBreadcrumb.vue";
 import CopytoClipboard from "../../components/common/CopytoClipboard.vue";
+import Button from "@/components/ui/Button.vue";
 const currentPageTitle = ref("Configuración de red");
 
 //Peticiones
