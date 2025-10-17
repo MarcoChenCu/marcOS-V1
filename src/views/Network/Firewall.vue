@@ -7,17 +7,21 @@
         Start putting content on grids or panels, you can also use different
         combinations of grids.Please check out the dashboard and other pages
       </p>  
-      <div class="flex items-center gap-4 mt-4 mb-4">
-        <h4><strong>Estado del firewall</strong></h4>
-        <ToggleSwitch/>
-      </div>
-      <!--Modal confirmar desactivar firewall-->
-      <button
-      @click="showModal = true"
-      class="rounded-lg bg-brand-500 px-4 py-2 text-white hover:bg-brand-600"
-      >
-      Abrir modal
-    </button>      
+      <div class="flex items-center order-2 justify-between gap-4 mt-4 mb-4" >
+        <div class="flex items-center gap-4 mt-4 mb-4">
+          <h4><strong>Estado del firewall</strong></h4>
+          <ToggleSwitch
+            v-model="toggle"
+            @toggle-off="showModal = true"
+          />
+        </div>        
+        <button
+        @click="showModal = true"
+        class="rounded-lg bg-brand-500 px-4 py-2 text-white hover:bg-brand-600"
+        >
+        Agregar servicio
+      </button>      
+    </div>
       
       <div class="max-w-full overflow-x-auto custom-scrollbar">
         <table class="min-w-full">
@@ -37,7 +41,7 @@
               </th>
               <th class="py-3 text-left">
                 <p class="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Acciones</p>
-              </th>           
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -58,22 +62,34 @@
                 <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ service.command }}</p>
               </td>
               <td v-if="limit==='all'" class="py-3 text-left">
-                <Button variant="error" size="md">Cancelar</Button>                  
+                <Button variant="error" size="md">Cancelar</Button>
               </td>
             </tr>
-          </tbody>        
+          </tbody>      
         </table>
       </div>
     </div>
     
     <OkCancelModal
     :visible="showModal"
-    title="Guardar cambios"
-    description="¿Deseas guardar los cambios realizados?"
-    @close="showModal = false"
-    @save="handleSave"
+    title="Desactivar el Firewall"
+    description="Esto tiene implicaciones en la seguridad del sistema."
+    @close="cancelToggle"
+    @save="confirmToggle"
     />
-  </AdminLayout>
+    <StanndarModal
+    :visible="ShowServiceModal"
+    title="Agregar servicio"
+    description="Agregar un servicio al firewall para permitir el trafico."
+    @close="ShowServiceModal=false"
+    @save="saveService"
+    >
+    <template #content>
+      <h1>hola mundo</h1>
+    </template>
+    </StanndarModal>
+    
+    </AdminLayout>
 </template>
 
 <script setup>
@@ -81,18 +97,36 @@
   import AdminLayout from "@/components/layout/AdminLayout.vue";
   import PageBreadcrumb from "@/components/common/PageBreadcrumb.vue";
   import ToggleSwitch from "@/components/common/ToggleSwitch.vue";
-  import OkCancelModal from "@/components/common/OkCancelModal.vue";  
+  import OkCancelModal from "@/components/common/OkCancelModal.vue";
+  import StanndarModal from "@/components/common/StandarModal.vue";
 
   const Services = ({})
   const currentPageTitle = ref("Firewall");
   const toggle = ref(false)
 
   const showModal = ref(false)
+  const ShowServiceModal = ref(false)
 
   const handleSave = () => {
     console.log("Acción confirmada")
     showModal.value = false
   }
+
+  const cancelToggle = () => {
+    // Cancelar acción → volver a activar el toggle
+    toggle.value = true
+    showModal.value = false
+  }
+  
+  const confirmToggle = () => {
+    console.log("Firewall desactivado")
+    showModal.value = false
+  }
+
+  const saveService = ()=>{
+    console.log("Servicio guardado")
+  }
+
 </script>
 
 <style></style>

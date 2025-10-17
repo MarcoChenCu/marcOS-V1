@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center gap-3">
     <label class="switch">
-      <input type="checkbox" v-model="isChecked" />
+      <input type="checkbox" v-model="isChecked" @change="handleChange" />
       <div class="slider round"></div>
     </label>
     <span class="text-sm font-medium text-gray-800 dark:text-gray-300">
@@ -11,40 +11,49 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue"
+  import { ref, watch, defineEmits } from "vue"
 
-// Props: texto para los estados y estado inicial
-const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false
-  },
-  enabledText: {
-    type: String,
-    default: "Habilitado"
-  },
-  disabledText: {
-    type: String,
-    default: "Deshabilitado"
+  // Props: texto para los estados y estado inicial
+  const props = defineProps({
+    modelValue: {
+      type: Boolean,
+      default: false
+    },
+    enabledText: {
+      type: String,
+      default: "Habilitado"
+    },
+    disabledText: {
+      type: String,
+      default: "Deshabilitado"
+    }
+  })
+
+  // Emitir cambios al componente padre
+  const emit = defineEmits(["update:modelValue", "toggle-off", "toggle-on"]);
+
+  const isChecked = ref(props.modelValue)
+
+  // Sincronizar con v-model externo
+  watch(
+    () => props.modelValue,
+    (newVal) => {
+      isChecked.value = newVal
+    }
+  )
+
+  watch(isChecked, (newVal) => {
+    emit("update:modelValue", newVal)
+  })
+
+  const handleChange = () => {
+  emit("update:modelValue", isChecked.value);
+  if (isChecked.value) {
+    emit("toggle-on");
+  } else {
+    emit("toggle-off");
   }
-})
-
-// Emitir cambios al componente padre
-const emit = defineEmits(["update:modelValue"])
-
-const isChecked = ref(props.modelValue)
-
-// Sincronizar con v-model externo
-watch(
-  () => props.modelValue,
-  (newVal) => {
-    isChecked.value = newVal
-  }
-)
-
-watch(isChecked, (newVal) => {
-  emit("update:modelValue", newVal)
-})
+};
 </script>
 
 <style scoped>
