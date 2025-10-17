@@ -7,15 +7,18 @@
         Start putting content on grids or panels, you can also use different
         combinations of grids.Please check out the dashboard and other pages
       </p>  
-      
-      <div>
-        <h4>Estado:</h4>
-        <!-- Rounded switch -->
-        <label class="switch">
-          <input type="checkbox">
-          <span class="slider round"></span>
-        </label> 
+      <div class="flex items-center gap-4 mt-4 mb-4">
+        <h4><strong>Estado del firewall</strong></h4>
+        <ToggleSwitch/>
       </div>
+      <!--Modal confirmar desactivar firewall-->
+      <button
+      @click="showModal = true"
+      class="rounded-lg bg-brand-500 px-4 py-2 text-white hover:bg-brand-600"
+      >
+      Abrir modal
+    </button>      
+      
       <div class="max-w-full overflow-x-auto custom-scrollbar">
         <table class="min-w-full">
           <thead>
@@ -62,19 +65,34 @@
         </table>
       </div>
     </div>
+    
+    <OkCancelModal
+    :visible="showModal"
+    title="Guardar cambios"
+    description="¿Deseas guardar los cambios realizados?"
+    @close="showModal = false"
+    @save="handleSave"
+    />
   </AdminLayout>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import AdminLayout from "@/components/layout/AdminLayout.vue";
-import PageBreadcrumb from "@/components/common/PageBreadcrumb.vue";
+  import { ref } from "vue";
+  import AdminLayout from "@/components/layout/AdminLayout.vue";
+  import PageBreadcrumb from "@/components/common/PageBreadcrumb.vue";
+  import ToggleSwitch from "@/components/common/ToggleSwitch.vue";
+  import OkCancelModal from "@/components/common/OkCancelModal.vue";  
 
-const Services = ({})
+  const Services = ({})
+  const currentPageTitle = ref("Firewall");
+  const toggle = ref(false)
 
-const currentPageTitle = ref("Firewall");
+  const showModal = ref(false)
 
-const toggle = ref(false)
+  const handleSave = () => {
+    console.log("Acción confirmada")
+    showModal.value = false
+  }
 </script>
 
 <style></style>
