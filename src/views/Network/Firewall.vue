@@ -133,8 +133,7 @@
         </div>
       </template>
     </StandarModal>
-    
-    </AdminLayout>
+  </AdminLayout>
 </template>
 
 <script setup>
@@ -145,6 +144,7 @@
   import OkCancelModal from "@/components/common/OkCancelModal.vue";
   import StandarModal from "@/components/common/StandarModal.vue";
   import CopytoClipboard from "@/components/common/CopytoClipboard.vue";
+  import { notificationStore } from "@/stores/notificationStore";
 
   const Services = ({    
     pid: "1",
@@ -165,7 +165,7 @@
   }
   
   const confirmToggle = () => {
-    console.log("Firewall desactivado")
+    notificationStore.add('warning', 'Seguridad de la red', 'Se ha desactivado el firewall.')
     showModal.value = false
   }
 

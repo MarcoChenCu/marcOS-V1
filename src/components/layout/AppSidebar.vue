@@ -217,15 +217,11 @@ import { useRoute } from "vue-router";
 import {
   GridIcon,
   UserGroupIcon,
-  PieChartIcon,
   ChevronDownIcon,
-  HorizontalDots,
-  PageIcon,
-  TableIcon,
+  HorizontalDots,  
   ListIcon,
   TerminalIcon,
-  NetworkIcon,
-  FileExplorerIcon,
+  NetworkIcon,  
   UpdateIcon,
   ProcessIcon,
 } from "../../icons";

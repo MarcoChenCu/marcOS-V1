@@ -76,7 +76,9 @@
       >
         <div class="flex items-center gap-2 2xsm:gap-3">
           <ThemeToggler />
-          <NotificationMenu />
+          <!-- Notificaciones V2 xd
+            <NotificationMenu />
+            -->
         </div>
         <UserMenu />
       </div>
