@@ -37,6 +37,7 @@ const router = createRouter({
       component: () => import('../views/Network/NetworkConf.vue'),
       meta: {
         title: 'Configuración de Red',
+        requiresAuth: true,
       },
     },
 
@@ -46,6 +47,7 @@ const router = createRouter({
       component: () => import('../views/Network/Firewall.vue'),
       meta: {
         title: 'Firewall',
+        requiresAuth: true,
       },
     },
 
@@ -55,17 +57,20 @@ const router = createRouter({
       component: () => import('../views/General/Terminal.vue'),
       meta: {
         title: 'Terminal',
+        requriesAuth: true,
       },
     },
-
+    /*Explorador de archivos para la version 2 XD      
     {
       path: '/file_explorer',
       name: 'File Explorer',
       component: () => import('../views/General/FileExplorer.vue'),
       meta: {
         title: 'Explorador de archivos',
+        requiresAuth: true,
       },
     },
+    */
 
     {
       path: '/updates',
@@ -73,6 +78,7 @@ const router = createRouter({
       component: () => import('../views/General/Updates.vue'),
       meta: {
         title: 'Actualizaciones',
+        requiresAuth: true,
       },
     },
 
@@ -82,6 +88,7 @@ const router = createRouter({
       component: () => import('../views/General/Apps.vue'),
       meta: {
         title: 'Aplicaciones',
+        requiresAuth: true,
       },
     },
 
@@ -91,6 +98,7 @@ const router = createRouter({
       component: () => import('../views/General/Processes.vue'),
       meta: {
         title: 'Procesos',
+        requiresAuth: true,
       },
     },
 
@@ -100,6 +108,7 @@ const router = createRouter({
       component: () => import('../views/General/Logs.vue'),
       meta: {
         title: 'Registros',
+        requiresAuth: true,
       },
     },
 
@@ -113,11 +122,12 @@ const router = createRouter({
     },
     
     {
-      path: '/profile',
-      name: 'Profile',
-      component: () => import('../views/Others/UserProfile.vue'),
+      path: '/users',
+      name: 'Users',
+      component: () => import('../views/General/Users.vue'),
       meta: {
-        title: 'Profile',
+        title: 'usuarios',
+        requiresAuth: true,
       },
     },
 
@@ -128,33 +138,7 @@ const router = createRouter({
       meta: {
         title: 'Form Elements',
       },
-    },
-    {
-      path: '/calendar',
-      name: 'Calendar',
-      component: () => import('../views/Others/Calendar.vue'),
-      meta: {
-        title: 'Calendar',
-      },
-    },
-    {
-      path: '/basic-tables',
-      name: 'Basic Tables',
-      component: () => import('../views/Tables/BasicTables.vue'),
-      meta: {
-        title: 'Basic Tables',
-      },
-    },
-    {
-      path: '/line-chart',
-      name: 'Line Chart',
-      component: () => import('../views/Chart/LineChart/LineChart.vue'),
-    },
-    {
-      path: '/bar-chart',
-      name: 'Bar Chart',
-      component: () => import('../views/Chart/BarChart/BarChart.vue'),
-    },
+    },    
     {
       path: '/alerts',
       name: 'Alerts',
@@ -164,14 +148,6 @@ const router = createRouter({
       },
     },
     {
-      path: '/avatars',
-      name: 'Avatars',
-      component: () => import('../views/UiElements/Avatars.vue'),
-      meta: {
-        title: 'Avatars',
-      },
-    },    
-    {
       path: '/badge',
       name: 'Badge',
       component: () => import('../views/UiElements/Badges.vue'),
@@ -179,7 +155,7 @@ const router = createRouter({
         title: 'Badge',
       },
     },
-
+    /*
     {
       path: '/buttons',
       name: 'Buttons',
@@ -187,26 +163,8 @@ const router = createRouter({
       meta: {
         title: 'Buttons',
       },
-    },
-
-    {
-      path: '/images',
-      name: 'Images',
-      component: () => import('../views/UiElements/Images.vue'),
-      meta: {
-        title: 'Images',
-      },
-    },
-    {
-      path: '/videos',
-      name: 'Videos',
-      component: () => import('../views/UiElements/Videos.vue'),
-      meta: {
-        title: 'Videos',
-      },
-    },
-    
-    /*
+    },    
+        
     {
       path: '/signup',
       name: 'Signup',

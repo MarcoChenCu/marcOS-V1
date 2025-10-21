@@ -3,7 +3,7 @@
     <div class="grid grid-cols-12 gap-4 md:gap-6">
       <div class="col-span-12 space-y-6 xl:col-span-7">
         <!--Metricas del sistema-->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">              
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
           <SystemMetrics
             title="Procesador"
             :description="metrics.cpu?.model+' ('+metrics.cpu?.cores+' cores) '+metrics.cpu?.speed+'GHz'"
@@ -119,26 +119,25 @@
     </div>
   </admin-layout>
 </template>
+
 <script>
-
-import AdminLayout from '../components/layout/AdminLayout.vue'
-import EcommerceMetrics from '../components/ecommerce/EcommerceMetrics.vue'
-import SystemMetrics from '@/components/ecommerce/SystemMetrics.vue'
-import SystemInfo from '../components/ecommerce/SystemInfo.vue'
-import CustomerDemographic from '../components/ecommerce/CustomerDemographic.vue'
-import StatisticsChart from '../components/ecommerce/StatisticsChart.vue'
-import Processes from '../components/ecommerce/Processes.vue'
-import Alert from '../components/ui/Alert.vue'
-
-export default {
-  components: {
-    AdminLayout,
-    EcommerceMetrics,
-    SystemMetrics,
-    SystemInfo,
-    CustomerDemographic,
-    StatisticsChart,
-    Processes,
+  import AdminLayout from '../components/layout/AdminLayout.vue'
+  import EcommerceMetrics from '../components/ecommerce/EcommerceMetrics.vue'
+  import SystemMetrics from '@/components/ecommerce/SystemMetrics.vue'
+  import SystemInfo from '../components/ecommerce/SystemInfo.vue'
+  import CustomerDemographic from '../components/ecommerce/CustomerDemographic.vue'
+  import StatisticsChart from '../components/ecommerce/StatisticsChart.vue'
+  import Processes from '../components/ecommerce/Processes.vue'
+  import Alert from '../components/ui/Alert.vue'
+  export default {
+    components: {
+      AdminLayout,
+      EcommerceMetrics,
+      SystemMetrics,
+      SystemInfo,
+      CustomerDemographic,
+      StatisticsChart,
+      Processes,
   },
   name: 'Ecommerce',
 }
@@ -146,35 +145,52 @@ export default {
 </script>
 
 <script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
 
-import { ref, onMounted } from 'vue'
 const metrics = ref({})
-
 const processes = ref({})
-
-onMounted(() => {
-  loadMetrics()
-  setInterval(loadMetrics, 1000)
-})
+const loading = ref(false)
+let intervalId = null
 
 const apiURL = import.meta.env.VITE_API_URL
+
 async function loadMetrics() {
   try {
-    const res = await fetch(`${apiURL}/api/system`)
-    const data = await res.json()
-    metrics.value = data
-    //console.log(metrics.value)
+    loading.value = true
+
+    // Promesas simultáneas para mayor eficiencia
+    const [systemRes, processRes] = await Promise.all([
+      fetch(`${apiURL}/api/system`),
+      fetch(`${apiURL}/api/process`)
+    ])
+
+    // Verifica que las respuestas sean válidas antes de procesarlas
+    const systemData = systemRes.ok ? await systemRes.json() : {}
+    const processData = processRes.ok ? await processRes.json() : {}
+
+    // Evita valores null o undefined
+    metrics.value = systemData || {}
+    processes.value = processData || {}
   } catch (err) {
-    console.error("Error al obtener métricas:", err)
-  }
-  try {
-    const res = await fetch(`${apiURL}/api/process`)
-    const data = await res.json()
-    processes.value = data
-    //console.log(processes.value)
-  } catch (err) {
-    console.error("Error al obtener los procesos:", err)
+    console.warn('Error al obtener métricas o procesos:', err)
+    metrics.value = {}
+    processes.value = {}
+  } finally {
+    loading.value = false
   }
 }
 
+onMounted(() => {
+  loadMetrics()
+  // Guardamos el ID del intervalo para poder limpiarlo
+  intervalId = setInterval(loadMetrics, 2000)
+})
+
+//Detener el intervalo cuando el componente se desmonta
+onUnmounted(() => {
+  if (intervalId) {
+    clearInterval(intervalId)
+    intervalId = null
+  }
+})
 </script>

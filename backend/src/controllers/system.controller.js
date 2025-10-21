@@ -1,8 +1,8 @@
 import si from "systeminformation"
-
+let networkRates = { rx: 0, tx: 0 }
 export const getSystemInfo = async (req, res) => {
   try {
-    const [cpuData, cpuLoad, memData, diskData, tempData, DiskInfo, timeInfo, OSInfo, networkInfo, networkStats] = await Promise.all([
+    const results = await Promise.allSettled([
       si.cpu(),
       si.currentLoad(),
       si.mem(),
@@ -15,75 +15,91 @@ export const getSystemInfo = async (req, res) => {
       si.networkStats(),
     ])
 
-    // ✅ Validar datos
-    const cpuUsage = cpuLoad?.currentLoad ?? 0
+    // Extraer resultados o usar valores por defecto
+    const [cpuData, cpuLoad, memData, diskData, tempData, diskInfo, timeInfo, osInfo, networkInfo, networkStats] = results.map(r =>
+      r.status === "fulfilled" ? r.value : null
+    )
+
+    // CPU
+    const cpuUsage = Number(cpuLoad?.currentLoad ?? 0)
     const cpuTemp = tempData?.main ?? null
 
-    //const totalStorage = diskData?.reduce((acc, disk) => acc + (disk.size || 0), 0) || 0
-  const totalStorage = diskData?.[0]?.size || 0
-  const usedStorage = diskData?.[0]?.used || 0
-  const storagePercent = totalStorage > 0 ? (usedStorage / totalStorage) * 100 : 0
+    // DISK
+    const firstDisk = diskData?.[0] ?? {}
+    const totalStorage = firstDisk.size ?? 0
+    const usedStorage = firstDisk.used ?? 0
+    const storagePercent = totalStorage > 0 ? (usedStorage / totalStorage) * 100 : 0
 
-  // uptime comes in seconds from systeminformation -> convert to days/hours/minutes
-  const uptimeSeconds = Math.floor(timeInfo?.uptime ?? 0)
-  const days = Math.floor(uptimeSeconds / 86400) || 0
-  const hours = Math.floor((uptimeSeconds % 86400) / 3600)
-  const minutes = Math.floor((uptimeSeconds % 3600) / 60)
-  const seconds = uptimeSeconds % 60
+    // MEMORY
+    const totalMem = memData?.total ?? 0
+    const usedMem = memData?.active ?? memData?.used ?? 0
+    const memPercent = totalMem > 0 ? (usedMem / totalMem) * 100 : 0
 
-  // Formatear la hora actual (timeInfo.current viene en ms desde epoch)
-  const epochMs = timeInfo?.current ?? Date.no1w()
-  const timeISO = new Date(epochMs).toISOString()
-  const timeLocal = new Date(epochMs).toLocaleString('es-ES', { timeZoneName: 'short' })
+    // TIME
+    const uptimeSeconds = Math.floor(timeInfo?.uptime ?? 0)
+    const days = Math.floor(uptimeSeconds / 86400)
+    const hours = Math.floor((uptimeSeconds % 86400) / 3600)
+    const minutes = Math.floor((uptimeSeconds % 3600) / 60)
 
-  res.json({
+    const epochMs = timeInfo?.current ?? Date.now()
+    const timeISO = new Date(epochMs).toISOString()
+    const timeLocal = new Date(epochMs).toLocaleString('es-ES', { timeZoneName: 'short' })
+
+    // OS
+    const os = {
+      distro: osInfo?.distro ?? "Desconocido",
+      release: osInfo?.release ?? "",
+      kernel: osInfo?.kernel ?? "Desconocido",
+      hostname: osInfo?.hostname ?? "Sin nombre",
+    }
+
+    // NETWORK
+    const iface = networkInfo?.[1] ?? networkInfo?.[0] ?? {}
+    const netStats = networkStats?.[0] ?? {}
+    
+    const network = {
+      hostname: os.hostname,
+      interface: iface.iface ?? "Desconocido",
+      ip: iface.ip4 ?? "",
+      mac: iface.mac ?? "",
+      networkInfo: networkInfo,
+      //down: (networkRates.rx * 8) / (1024 * 1024),
+      //up: (networkRates.tx * 8) / (1024 * 1024),
+    }
+
+    // RESPUESTA FINAL
+    res.json({
       cpu: {
-        model: cpuData?.brand || "Desconocido",
+        model: cpuData?.brand ?? "Desconocido",
         usage: parseFloat(cpuUsage.toFixed(1)),
-        cores: cpuData?.cores || 1,
-        speed: cpuData?.speedMax || 0,
-        temperature: cpuTemp,
+        cores: cpuData?.cores ?? 1,
+        speed: cpuData?.speedMax ?? 0,
+        temperature: cpuTemp ?? 0,
       },
       memory: {
-        total: parseFloat((memData?.total / (1024 ** 3) || 0).toFixed(1)), // GB
-        used: parseFloat((memData?.active / (1024 ** 3) || 0).toFixed(1)),
-        percent: memData?.total ? parseFloat(((memData.active / memData.total) * 100).toFixed(1)) : 0,        
+        total: parseFloat((totalMem / 1024 ** 3).toFixed(1)),
+        used: parseFloat((usedMem / 1024 ** 3).toFixed(1)),
+        percent: parseFloat(memPercent.toFixed(1)),
       },
       storage: {
-        device: DiskInfo?.[0]?.device || 'Desconocido',        
-        total: parseFloat((totalStorage / (1000 ** 3)).toFixed(1)), // GB
-        used: parseFloat((usedStorage / (1000 ** 3)).toFixed(1)),
+        device: diskInfo?.[0]?.device ?? "Desconocido",
+        total: parseFloat((totalStorage / 1000 ** 3).toFixed(1)),
+        used: parseFloat((usedStorage / 1000 ** 3).toFixed(1)),
         percent: parseFloat(storagePercent.toFixed(1)),
       },
       system: {
-        so: OSInfo.distro + ' '+OSInfo.release,
-        kernel: OSInfo.kernel,
-        hostname: OSInfo.hostname,       
-        uptime: {
-          days: days ? days : 0,
-          hours: hours ? hours : 0,
-          minutes: minutes ? minutes : 0,
-        },      
-        // enviar la hora en formato local legible y en ISO (UTC)
-        time: {
-          epochMs,
-          iso: timeISO,
-          local: timeLocal,
-        }, // zona horaria o horario local
+        so: `${os.distro} ${os.release}`.trim(),
+        kernel: os.kernel,
+        hostname: os.hostname,
+        uptime: { days, hours, minutes },
+        time: { epochMs, iso: timeISO, local: timeLocal },
       },
-      network: {
-        hostname: OSInfo.hostname,
-        interface: networkInfo?.[1].iface || 'Desconocido', 
-        ip: networkInfo?.[1]?.ip4 || '',
-        mac: networkInfo?.[1]?.mac || '',
-        networkInfo: networkInfo,        
-        bytesDown: 25,
-        bytesUp: networkStats[0]?.dropped,
-
-      },
+      network,
     })
   } catch (error) {
-    console.error("Error obteniendo datos del sistema:", error)
+    console.error("Error obteniendo datos del sistema:", error.message)
+    console.error(error.stack)
     res.status(500).json({ message: "Error obteniendo datos del sistema" })
   }
 }
+

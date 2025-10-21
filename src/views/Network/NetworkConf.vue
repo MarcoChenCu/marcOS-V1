@@ -7,11 +7,21 @@
         Interfaces
       </h3>      
       <p class="text-sm text-gray-500 dark:text-gray-400 sm:text-base">
-        El sistema identifica las interfaces Ethernet utilizando nombres de interfaz de red predecibles. Estos nombres pueden aparecer como <strong>eno1</strong> o <strong>enp0s25</strong>. 
+        El sistema identifica las interfaces Ethernet utilizando nombres de interfaz de red predecibles. 
+        Estos nombres pueden aparecer como <strong>eno1</strong> o <strong>enp0s25</strong>. 
         Sin embargo, en algunos casos una interfaz aún puede utilizar el estilo <strong>eth#</strong> de nombramiento del kernel.
-      </p>      
+      </p>  
+      <!--Configurar interfaz-->    
+      <!--Modal para agregar servicio-->
+      <div class="flex items-center order-2 justify-between gap-4 mt-4 mb-4">
+        <button
+        @click="showInterfaceModal = true"
+        class="rounded-lg bg-brand-500 px-4 py-2 text-white hover:bg-brand-600">
+        Configurar interfaz
+      </button>
+    </div>
       <!--Componentes de interfaces-->
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 mt-2">  
+      <div v-if="network && network.length" class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 mt-2">  
        <!--Componente de la informacion de interfaz-->
         <div 
           v-for="(interfaceInfo, index) in network"
@@ -60,8 +70,10 @@
             </div>        
           </div>
         </div> <!--Fin informacion interfaz-->
+      </div><!--Fin interfaces-->
+      <div v-else class="flex items-center justify-center min-h-[250px]"><!--Spinner condicional-->
+        <Spinner/>
       </div>
-      <!--Fin interfaces-->
       <!--Copiar al portapapeles-->
       <div class="mx-auto w-full max-w-[630px] text-center mt-4 mb-4">
         <CopytoClipboard
@@ -162,6 +174,116 @@
         <a class="underline cursor-pointer text-brand-500" href="https://documentation.ubuntu.com/server/explanation/networking/configuring-networks/">Configuración de red Ubuntu Server</a>
       </div><!--Ejemplo archivo netplan-->
     </div><!--Fin configuracion archivo de red-->
+    <!--Modal formulario agregar servicio-->
+    <StandarModal
+      :visible="showInterfaceModal"
+      title="Configurar interfaz"
+      description=""
+      @close="showInterfaceModal=false"
+      @save="saveInterface"
+      >
+    <!--Contenido del modal-->
+      <template #content>
+        <div><!--Columna-->          
+          <div class="mb-2 mt-2"><!--Seleccionar interfaz-->
+            <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+              Interfaz:
+            </label>
+            <div class="relative z-20 bg-transparent"><!--Contenedor select-->
+              <select
+                  v-model="singleSelect"
+                  class="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                  :class="{ 'text-gray-800 dark:text-white/90': singleSelect }"
+                >
+                <option value="0" disabled>Seleccionar interfaz</option>
+                <option 
+                  v-for="(interfaceInfo, index) in network"
+                  :key="interfaceInfo.ifaceName"
+                  :value="interfaceInfo.ifaceName" class="text-gray-700 dark:bg-gray-900 dark:text-gray-400">
+                  {{interfaceInfo.ifaceName}}
+                </option>
+              </select>
+              <span class="absolute z-30 text-gray-700 -translate-y-1/2 pointer-events-none right-4 top-1/2 dark:text-gray-400">
+                <svg
+                  class="stroke-current"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                <path
+                  d="M4.79175 7.396L10.0001 12.6043L15.2084 7.396"
+                  stroke=""
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                </svg>
+              </span>
+            </div><!--Contenedor select-->
+          </div><!--Fin seleccionar interfaz-->
+          <!--Toggle activar/desactivar DHCP -->
+          <div class="flex items-center gap-4 mt-4 mb-4">
+            <h4 class="text-gray-800 dark:text-white/90"><strong>DHCP</strong></h4>
+            <ToggleSwitch
+              v-model="toggle"
+              @toggle-off="showConfigInterface = true"
+              @toogle-on="showConfigInterface = false"
+            />
+          </div>
+            <label class="mb-1.5 block text-sm font-medium text-gray-400 dark:text-gray-600">
+              El protocolo de configuración dinámica de host (DHCP) para la asignación automática de direcciones IP.
+            </label>
+          <div v-if="showConfigInterface"><!--Parametros interfaz-->
+            <div>
+              <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                IP:
+              </label>
+              <input
+                type="text"
+                placeholder="Ejemplo: 192.168.0.10"
+                class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+              />                      
+            </div>   
+            <div>
+              <label class="mb-2 mt-2 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                Máscara de subred (subnet mask):
+              </label>
+              <input
+                type="text"
+                placeholder="Ejemplo: 255.255.255.0"  
+                class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+              />          
+            </div> 
+            <div>
+              <label class="mb-2 mt-2 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                Puerta de enlace (Gateway):
+              </label>
+              <input
+                type="text"
+                placeholder="Ejemplo: 255.255.255.0"  
+                class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                />          
+            </div>  
+            <div>
+              <label class="mb-2 mt-2 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                DNS:
+              </label>
+              <input
+                type="text"
+                placeholder="Ejemplo: 8.8.8.8"  
+                class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+              />  
+              <label class="mb-1.5 block text-sm font-medium text-gray-400 dark:text-gray-600">
+                Si se ingresa más de un DNS se deben separar por comas. Ejemplo 8.8.8.8, 1.1.1.1
+              </label>        
+            </div>   
+          </div><!--Fin parametros interfaz-->
+        </div><!--Fin columna-->
+      </template>
+    </StandarModal>
+
   </AdminLayout>
 </template>
 
@@ -170,28 +292,61 @@ import AdminLayout from "@/components/layout/AdminLayout.vue";
 import PageBreadcrumb from "@/components/common/PageBreadcrumb.vue";
 import CopytoClipboard from "../../components/common/CopytoClipboard.vue";
 import Button from "@/components/ui/Button.vue";
+import Spinner from "@/components/common/Spinner.vue";
+import StandarModal from "@/components/common/StandarModal.vue";
+import ToggleSwitch from "@/components/common/ToggleSwitch.vue";
 const currentPageTitle = ref("Configuración de red");
 
+//Modal configurar interfaz
+const toggle = ref(false)
+const showInterfaceModal = ref(false)
+const showConfigInterface = ref(false)
+
+const saveInterface = ()=>{
+  console.log("Guardar interfaz")
+  showInterfaceModal.value = false
+}
+
 //Peticiones
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 const network = ref({})
 
-onMounted(() => {
-  loadnetworkInfo()
-  //setInterval(loadnetwork, 8000)
-})
-
+let intervalId = null
 const apiURL = import.meta.env.VITE_API_URL
-async function loadnetworkInfo() {
+
+async function loadMetrics() {
   try {
-    const res = await fetch(`${apiURL}/api/system`)
-    const data = await res.json()
-    network.value = data.network.networkInfo
-    console.log(network.value)
+    const res = await fetch(`${apiURL}/api/system`, { cache: "no-store" })
+
+    // Si la respuesta no es correcta, lanzar error
+    if (!res.ok) throw new Error(`Error HTTP: ${res.status}`)
+
+    // Verifica que las respuestas sean válidas antes de procesarlas
+    const networkData = res.ok ? await res.json() : {}
+
+    // Evita valores null o undefined    
+    network.value = networkData.network.networkInfo || {}
   } catch (err) {
-    console.error("Error al obtener métricas:", err)
+    console.error("Error al obtener las interfaces:", err)
+    network.value = { networkData: [] } // evitar undefined en el template
   }
 }
+
+ onMounted(() => {
+    loadMetrics()
+    // Actualiza cada 5 segundos, solo si el componente está activo    
+    intervalId = setInterval(loadMetrics, 5000)
+  })
+
+  onUnmounted(() => {
+    // Detener las peticiones al salir de la vista
+    if (intervalId){
+      clearInterval(intervalId)
+      intervalId = null
+    }
+
+  })
+
 
 function typeConection(Type){
   if(Type==="wireless"){
