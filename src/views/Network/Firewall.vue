@@ -4,7 +4,7 @@
     <div class="rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
       <!--Descripcion del modulo-->      
       <p class="text-sm text-gray-500 dark:text-gray-400 sm:text-base mb-2">
-        El firewall se utiliza para manipular o decidir 
+        El firewall que se utiliza para manipular o decidir 
         el destino del tráfico de red que se dirige hacia o a través de su servidor.
       </p>  
       <!--Fila toggle y boton modal agregar servicio-->
@@ -95,19 +95,19 @@
     </div>
     <!--Modal desactivacion de firewall-->
     <OkCancelModal
-    :visible="showModal"
-    title="Desactivar el Firewall"
-    description="Esto tiene implicaciones en la seguridad del sistema."
-    @close="cancelToggle"
-    @save="confirmToggle"
+      :visible="showModal"
+      title="Desactivar el Firewall"
+      description="Esto tiene implicaciones en la seguridad del sistema."
+      @close="cancelToggle"
+      @save="confirmToggle"
     />
     <!--Modal formulario agregar servicio-->
     <StandarModal
-    :visible="ShowServiceModal"
-    title="Agregar servicio"
-    description="Agregar un servicio al firewall para permitir el trafico."
-    @close="ShowServiceModal=false"
-    @save="saveService"
+      :visible="ShowServiceModal"
+      title="Agregar servicio"
+      description="Agregar un servicio al firewall para permitir el trafico."
+      @close="ShowServiceModal=false"
+      @save="saveService"
     >
       <!--Contenido del modal-->
       <template #content>        

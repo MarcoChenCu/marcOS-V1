@@ -35,7 +35,7 @@
         </div>
 
         <!-- Botones -->
-        <div class="flex items-center gap-3 mt-6 justify-end">          
+        <div v-if="Enablebuttons" class="flex items-center gap-3 mt-6 justify-end">          
           <button
             @click="emit('save')"
             type="button"
@@ -71,6 +71,10 @@ const props = defineProps({
   description: {
     type: String,
     default: "¿Estás seguro de continuar con esta acción?"
+  },
+  Enablebuttons: {
+    type: Boolean,
+    default: true
   }
 })
 

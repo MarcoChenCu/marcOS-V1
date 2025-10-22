@@ -128,7 +128,6 @@
   import CustomerDemographic from '../components/ecommerce/CustomerDemographic.vue'
   import StatisticsChart from '../components/ecommerce/StatisticsChart.vue'
   import Processes from '../components/ecommerce/Processes.vue'
-  import Alert from '../components/ui/Alert.vue'
   export default {
     components: {
       AdminLayout,
