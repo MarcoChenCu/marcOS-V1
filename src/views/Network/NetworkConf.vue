@@ -313,53 +313,50 @@
 </template>
 
 <script setup>
-import AdminLayout from "@/components/layout/AdminLayout.vue";
-import PageBreadcrumb from "@/components/common/PageBreadcrumb.vue";
-import CopytoClipboard from "../../components/common/CopytoClipboard.vue";
-import Button from "@/components/ui/Button.vue";
-import Spinner from "@/components/common/Spinner.vue";
-import StandarModal from "@/components/common/StandarModal.vue";
-import ToggleSwitch from "@/components/common/ToggleSwitch.vue";
-import { notificationStore } from '@/stores/notificationStore'
-const currentPageTitle = ref("Configuración de red");
+  import AdminLayout from "@/components/layout/AdminLayout.vue";
+  import PageBreadcrumb from "@/components/common/PageBreadcrumb.vue";
+  import CopytoClipboard from "../../components/common/CopytoClipboard.vue";
+  import Button from "@/components/ui/Button.vue";
+  import Spinner from "@/components/common/Spinner.vue";
+  import StandarModal from "@/components/common/StandarModal.vue";
+  import ToggleSwitch from "@/components/common/ToggleSwitch.vue";
+  import { notificationStore } from '@/stores/notificationStore'
+  const currentPageTitle = ref("Configuración de red");
 
-//Modal configurar interfaz
-const toggle = ref(false)
-const showInterfaceModal = ref(false)
-const showConfigInterface = ref(false)
+  //Modal configurar interfaz
+  const toggle = ref(false)
+  const showInterfaceModal = ref(false)
+  const showConfigInterface = ref(false)
 
-const saveInterface = ()=>{
-  console.log("Guardar interfaz")
-  showInterfaceModal.value = false
-  notificationStore.add('success', 'Éxito', 'Los cambios en la interfaz se guardaron correctamente.')
-}
-
-//Peticiones
-import { ref, onMounted, onUnmounted } from 'vue'
-const network = ref({})
-
-let intervalId = null
-const apiURL = import.meta.env.VITE_API_URL
-
-async function loadMetrics() {
-  try {
-    const res = await fetch(`${apiURL}/api/system`, { cache: "no-store" })
-
-    // Si la respuesta no es correcta, lanzar error
-    if (!res.ok) throw new Error(`Error HTTP: ${res.status}`)
-
-    // Verifica que las respuestas sean válidas antes de procesarlas
-    const networkData = res.ok ? await res.json() : {}
-
-    // Evita valores null o undefined    
-    network.value = networkData.network.networkInfo || {}
-  } catch (err) {
-    console.error("Error al obtener las interfaces:", err)
-    network.value = { networkData: [] } // evitar undefined en el template
+  const saveInterface = ()=>{
+    console.log("Guardar interfaz")
+    showInterfaceModal.value = false
+    notificationStore.add('success', 'Éxito', 'Los cambios en la interfaz se guardaron correctamente.')
   }
-}
 
- onMounted(() => {
+  //Peticiones
+  import { ref, onMounted, onUnmounted } from 'vue'
+  const network = ref({})
+
+  let intervalId = null
+  const apiURL = import.meta.env.VITE_API_URL
+
+  async function loadMetrics() {
+    try {
+      const res = await fetch(`${apiURL}/api/system`, { cache: "no-store" })
+      // Si la respuesta no es correcta, lanzar error
+      if (!res.ok) throw new Error(`Error HTTP: ${res.status}`)
+      // Verifica que las respuestas sean válidas antes de procesarlas
+      const networkData = res.ok ? await res.json() : {}
+      // Evita valores null o undefined    
+      network.value = networkData.network.networkInfo || {}
+    } catch (err) {
+      console.error("Error al obtener las interfaces:", err)
+      network.value = { networkData: [] } // evitar undefined en el template
+    }
+  }
+
+  onMounted(() => {
     loadMetrics()
     // Actualiza cada 5 segundos, solo si el componente está activo    
     intervalId = setInterval(loadMetrics, 5000)
@@ -370,29 +367,27 @@ async function loadMetrics() {
     if (intervalId){
       clearInterval(intervalId)
       intervalId = null
-    }
-
+    }    
   })
 
 
-function typeConection(Type){
-  if(Type==="wireless"){
-    return "Inalámbrica"
+  function typeConection(Type){
+    if(Type==="wireless"){
+      return "Inalámbrica"
+    }
+    else if(Type==="wired"){
+      return "Cableada"
+    }
+    else if(Type==="virtual"){
+      return "Virtual"
+    }
+    else if(Type===""){
+      return "Desconocida"
+    }
+    else{
+      return Type
+    }
   }
-  else if(Type==="wired"){
-    return "Cableada"
-  }
-  else if(Type==="virtual"){
-    return "Virtual"
-  }
-  else if(Type===""){
-    return "Desconocida"
-  }
-  else{
-    return Type
-  }
-
-}
 </script>
 
 

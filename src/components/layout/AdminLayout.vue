@@ -12,16 +12,22 @@
         <slot></slot>
       </div>
     </div>
-    <!--Test bootn panel-->
+      <!--Test bootn panel-->
     <!-- Barra inferior -->
-    <StatusPanel @update:height="statusPanelHeight = $event">
+    <StatusPanel
+  :is-expanded="isExpanded"
+  :is-hovered="isHovered"
+  @update:height="statusPanelHeight = $event"
+  >
+
       <div>
         <p>[12:30:21] Usuario admin inició sesión</p>
         <p>[12:31:05] Se editó el registro #45</p>
       </div>
     </StatusPanel>
     <!--Test bootn panel-->
-  </div>
+    </div>
+    
 </template>
 
 <script setup>

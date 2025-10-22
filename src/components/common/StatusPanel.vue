@@ -1,8 +1,12 @@
 <template>
-  <div
-    class="fixed bottom-0 left-0 w-full z-[999] border-t bg-white border-gray-200 dark:border-gray-800 dark:bg-gray-900 lg:border-b"
-    :style="{ height: `${height}px` }"
-  >
+  <!-- ORIGINAL -- class="fixed bottom-0 left-0 w-full z-[999] border-t bg-white border-gray-200 dark:border-gray-800 dark:bg-gray-900 lg:border-t" --> 
+  <!-- AppHeader -- class="sticky top-0 flex w-full bg-white border-gray-200 z-99999 dark:border-gray-800 dark:bg-gray-900 lg:border-b"-->
+<div
+  class="fixed bottom-0 left-0 z-[999] border-t bg-white border-gray-200 dark:border-gray-800 dark:bg-gray-900 transition-all duration-300 ease-in-out"
+  :class="[isExpanded || isHovered ? 'lg:left-[290px] w-[calc(100vw-290px)]' : 'lg:left-[90px] w-[calc(100vw-90px)]']"
+  :style="{ height: `${height}px` }"
+>
+
     <splitpanes
       horizontal
       class="default-theme"
@@ -12,17 +16,23 @@
       <pane>
         <div class="flex flex-col h-full">
           <!-- Header de la barra -->
-          <div class="flex justify-between items-center px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800">
-            <span class="text-sm font-semibold text-gray-800 dark:text-gray-200">
-              Consola del sistema
-            </span>
+          <div class="flex items-center justify-between px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800">
+            <h1 class="font-semibold text-gray-800 dark:text-white/90">Consola del sistema</h1><!--Titulo muy a la izquierda-->            
+            <!--Boton expandir panel-->
             <button
               @click="toggleCollapse"
-              class="text-xs px-2 py-1 border rounded-md border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+              class="rounded-lg bg-brand-500 px-2 py-1 text-white hover:bg-brand-600"
             >
-              {{ collapsed ? 'Expandir' : 'Contraer' }}
-            </button>
-          </div>
+              <!--Icono expandir-->             
+              <ChevronDownIcon
+                :class="[
+                  'ml-auto w-5 h-5 transition-transform duration-200',
+                  {
+                    'rotate-180': collapsed
+                  },
+                ]"/>
+            </button><!--Boton visible-->
+          </div><!--Fin header-->
 
           <!-- Contenido -->
           <div class="flex-1 overflow-y-auto px-4 py-2 text-xs font-mono text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900">
@@ -41,6 +51,12 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { Splitpanes, Pane } from 'splitpanes'
+import { ChevronDownIcon } from "../../icons";
+
+const props = defineProps({
+  isExpanded: Boolean,
+  isHovered: Boolean
+})
 
 const height = ref(200)
 const collapsed = ref(false)

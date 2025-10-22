@@ -4,8 +4,8 @@
     <div class="rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
       <!--Descripcion del modulo-->      
       <p class="text-sm text-gray-500 dark:text-gray-400 sm:text-base mb-2">
-        Start putting content on grids or panels, you can also use different
-        combinations of grids.Please check out the dashboard and other pages
+        El firewall se utiliza para manipular o decidir 
+        el destino del tráfico de red que se dirige hacia o a través de su servidor.
       </p>  
       <!--Fila toggle y boton modal agregar servicio-->
       <div class="flex items-center order-2 justify-between gap-4 mt-4 mb-4">
@@ -67,7 +67,7 @@
                 <Button class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-green-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
                  variant="error" 
                  size="md">
-                 Acciones
+                  Acciones
                 </Button>
               </td>
             </tr>
