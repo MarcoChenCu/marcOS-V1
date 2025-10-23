@@ -2,13 +2,19 @@
   <div
     class="rounded-2xl border border-gray-200 bg-white px-5 pb-5 pt-5 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 sm:pt-6"
   >
+    <!-- Encabezado -->
     <div class="flex flex-col gap-5 mb-6 sm:flex-row sm:justify-between">
-      <div class="w-full">
-        <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Estadísticas</h3>        
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">
+          Uso del sistema
+        </h3>
       </div>
 
+      <!-- Selector CPU / RAM -->
       <div class="relative">
-        <div class="inline-flex items-center gap-0.5 rounded-lg bg-gray-100 p-0.5 dark:bg-gray-900">
+        <div
+          class="inline-flex items-center gap-0.5 rounded-lg bg-gray-100 p-0.5 dark:bg-gray-900"
+        >
           <button
             v-for="option in options"
             :key="option.value"
@@ -25,127 +31,129 @@
         </div>
       </div>
     </div>
+
+    <!-- Gráfico -->
     <div class="max-w-full overflow-x-auto custom-scrollbar">
       <div id="chartThree" class="-ml-4 min-w-[1000px] xl:min-w-full pl-2">
-        <VueApexCharts type="area" height="310" :options="chartOptions" :series="series" />
+        <VueApexCharts
+          type="area"
+          height="310"
+          :options="chartOptions"
+          :series="series"
+        />
       </div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue'
-
-const options = [
-  { value: 'optionOne', label: 'CPU' },
-  { value: 'optionTwo', label: 'RAM' },
-  { value: 'optionThree', label: 'RED' },
-]
-
-const selected = ref('optionOne')
+<script setup>
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 
+//  Parámetros
+const apiURL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+const updateInterval = 2000 // cada 2 segundos
+const maxPoints = 30
+
+//  Opciones de selección
+const options = [
+  { value: 'cpu', label: 'CPU' },
+  { value: 'ram', label: 'RAM' },
+]
+const selected = ref('cpu')
+
+// Datos del gráfico
 const series = ref([
   {
     name: '% de uso',
-    data: [80, 90, 70, 60, 75, 65, 70, 5, 30, 10, 40, 35],
-  },
-  {
-    name: 'Revenue',
-    data: [40, 30, 50, 40, 55, 40, 70, 10, 10, 20, 50, 40],
+    data: [],
   },
 ])
 
+// ⚙️ Configuración del gráfico
 const chartOptions = ref({
-  legend: {
-    show: false,
-    position: 'top',
-    horizontalAlign: 'left',
-  },
-  colors: ['#465FFF', '#9CB9FF'],
   chart: {
-    fontFamily: 'Outfit, sans-serif',
     type: 'area',
-    toolbar: {
-      show: false,
-    },
-  },
-  fill: {
-    gradient: {
+    animations: {
       enabled: true,
-      opacityFrom: 0.55,
-      opacityTo: 0,
+      easing: 'linear',
+      dynamicAnimation: { speed: 500 },
     },
+    toolbar: { show: false },
+    zoom: { enabled: false },
   },
-  stroke: {
-    curve: 'straight',
-    width: [2, 2],
-  },
-  markers: {
-    size: 0,
-  },
-  labels: {
-    show: false,
-    position: 'top',
-  },
-  grid: {
-    xaxis: {
-      lines: {
-        show: false,
-      },
-    },
-    yaxis: {
-      lines: {
-        show: true,
-      },
-    },
-  },
-  dataLabels: {
-    enabled: false,
-  },
-  tooltip: {
-    x: {
-      format: 'dd MMM yyyy',
+  colors: ['#3b82f6'],
+  dataLabels: { enabled: false },
+  stroke: { curve: 'smooth', width: 2 },
+  fill: {
+    type: 'gradient',
+    gradient: {
+      shadeIntensity: 1,
+      opacityFrom: 0.4,
+      opacityTo: 0.05,
     },
   },
   xaxis: {
-    type: 'category',
-    categories: [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ],
-    axisBorder: {
-      show: false,
-    },
-    axisTicks: {
-      show: false,
-    },
-    tooltip: {
-      enabled: false,
-    },
+    type: 'datetime',
+    labels: { datetimeFormatter: { hour: 'HH:mm:ss' } },
   },
   yaxis: {
-    title: {
-      style: {
-        fontSize: '0px',
-      },
-    },
+    max: 100,
+    min: 0,
+    tickAmount: 5,
+    labels: { formatter: (v) => v.toFixed(0) + '%' },
+  },
+  tooltip: {
+    x: { format: 'HH:mm:ss' },
+    y: { formatter: (val) => val.toFixed(1) + '%' },
+  },
+  grid: {
+    borderColor: 'rgba(255,255,255,0.1)',
   },
 })
-</script>
 
-<style scoped>
-.area-chart {
-  width: 100%;
+// Función para obtener las métricas
+async function fetchMetrics() {
+  try {
+    const res = await fetch(`${apiURL}/api/system`)
+    const data = await res.json()
+
+    const cpu = data?.cpu?.usage ?? 0
+    const ram = data?.memory?.percent ?? 0
+
+    const now = new Date().getTime()
+
+    // Selecciona la métrica actual (CPU o RAM)
+    const newValue = selected.value === 'cpu' ? cpu : ram
+
+    const serie = series.value[0].data
+    serie.push({ x: now, y: newValue })
+
+    // Limita el historial
+    if (serie.length > maxPoints) serie.shift()
+
+    // Fuerza la reactividad
+    series.value = [{ ...series.value[0], data: [...serie] }]
+  } catch (err) {
+    console.error('Error al obtener métricas:', err)
+  }
 }
-</style>
+
+let interval = null
+
+// Actualizacion
+onMounted(() => {
+  fetchMetrics()
+  interval = setInterval(fetchMetrics, updateInterval)
+})
+
+//Limpieza
+onBeforeUnmount(() => {
+  if (interval) clearInterval(interval)
+})
+
+// Reinicia los datos si cambia la métrica seleccionada
+watch(selected, () => {
+  series.value = [{ name: '% de uso', data: [] }]
+})
+</script>

@@ -18,12 +18,15 @@ const hasSystemData = computed(() => !!props.system?.so)
 
 <template>
   <div class="rounded-2xl border border-gray-200 bg-gray-100 dark:border-gray-800 dark:bg-white/[0.03]">
-    <!-- Información del sistema -->
-    <div class="px-5 pt-5 bg-white shadow-default rounded-2xl pb-7 dark:bg-gray-900 sm:px-6 sm:pt-6">
-      <template v-if="hasSystemData">
-        <div class="flex justify-between">
+    <div class="flex items-center justify-center gap-5 px-6 py-3.5 sm:gap-8 sm:py-5">      
+      <div class="flex justify-between">
           <h4 class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">Información del sistema</h4>
         </div>
+    </div>
+    <!-- Información del sistema -->
+    <div class="px-5 pt-5 bg-white shadow-default rounded-2xl pb-7 dark:bg-gray-900 sm:px-6 sm:pt-6 items-center">
+      <template v-if="hasSystemData">
+        
 
         <div class="flex items-center mt-2">
           <h3 class="text-md font-semibold text-gray-800 dark:text-white/90">Sistema operativo:&nbsp;</h3>
@@ -57,7 +60,7 @@ const hasSystemData = computed(() => !!props.system?.so)
           </p>
         </div>
 
-        <div class="flex items-center mt-2" v-if="system.time?.local">
+        <div class="flex items-center mt-2 mb-13" v-if="system.time?.local">
           <h3 class="text-md font-semibold text-gray-800 dark:text-white/90">Hora del sistema:&nbsp;</h3>
           <p class="text-md text-gray-500 dark:text-gray-400">{{ system.time.local }}</p>
         </div>
@@ -69,6 +72,7 @@ const hasSystemData = computed(() => !!props.system?.so)
     </div>
 
     <!-- Velocidades de red -->
+     <!--
     <div>
       <template v-if="hasSystemData">
         <div class="flex items-center justify-center gap-5 px-6 py-3.5 sm:gap-8 sm:py-5">
@@ -122,5 +126,6 @@ const hasSystemData = computed(() => !!props.system?.so)
         <Spinner/>
       </div>
     </div>
+  -->
   </div>
 </template>

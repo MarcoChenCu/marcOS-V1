@@ -102,12 +102,13 @@
           </SystemMetrics>
         </div>
       </div>
-      <div class="col-span-12 xl:col-span-5">
+      <!-- Informacion del sistema -->
+      <div class="col-span-12 space-y-6 xl:col-span-5">
         <SystemInfo
         :system="metrics.system"
         :network="metrics.network"
         />
-      </div>
+      </div>      
       <div class="col-span-12 xl:col">
         <statistics-chart />
       </div>

@@ -51,8 +51,12 @@ import FileExplorerIcon from "./FileExplorerIcon.vue"
 import UpdateIcon from "./UpdateIcon.vue"
 import CPUIcon from "./CPUIcon.vue"
 import ProcessIcon from "./ProcessIcon.vue"
+import PowerIcon from "./PowerIcon.vue";
+import CancelIcon from "./CancelIcon.vue";
 
 export {
+  CancelIcon,
+  PowerIcon,
   CPUIcon,
   TerminalIcon,
   NetworkIcon,
