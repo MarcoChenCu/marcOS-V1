@@ -117,7 +117,7 @@
           class="min-h-54 dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:shadow-focus-ring focus:outline-hidden focus:ring-0 disabled:border-gray-100 disabled:bg-gray-50 disabled:placeholder:text-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 dark:disabled:border-gray-800 dark:disabled:bg-white/[0.03] dark:disabled:placeholder:text-white/15"
         ></textarea> 
         <div class="flex items-center mt-4 mb-4 gap-4">
-          <Button variant="primary" size="md">
+          <Button variant="primary" size="md" @click="saveNeplanFile()">
             <div v-if="false"><!--Configurar spinner al guardar-->
               <svg
                 width="15"
@@ -322,6 +322,9 @@
   import ToggleSwitch from "@/components/common/ToggleSwitch.vue";
   import { notificationStore } from '@/stores/notificationStore'
   const currentPageTitle = ref("Configuración de red");
+  import { useCommandPanel } from "@/stores/commandPanel";
+
+  const CommandPanel = useCommandPanel();
 
   //Modal configurar interfaz
   const toggle = ref(false)
@@ -332,6 +335,21 @@
     console.log("Guardar interfaz")
     showInterfaceModal.value = false
     notificationStore.add('success', 'Éxito', 'Los cambios en la interfaz se guardaron correctamente.')
+  }
+
+  //Guardar cambios archivo netplan
+  const saveNeplanFile = (interfaceName)=>{
+    //Agregar comandos al StatusPanel
+    CommandPanel.add({      
+      commands: [
+        { command: "sudo nano /etc/netplan/50-netplan.yaml", title: "Editar archivo de red", description: "Utilizando el programa 'nano' se edita el archivo de red. El comando 'sudo' es necesario ya que se requieren privilegios para realizar esta tarea." },
+        { command: "sudo netplan apply", title: "Aplicar cambios", description: "Se aplican los cambios realizados al archivo de red al sistema." },
+      ],
+      state: "success",
+      description: "Editar el archivo de red netplan.",
+      output: 'OK'
+    });
+    notificationStore.add('success', 'Éxito', 'Los cambios en el archivo de red se guardaron correctamente.')
   }
 
   //Peticiones

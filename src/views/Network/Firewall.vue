@@ -145,6 +145,9 @@
   import StandarModal from "@/components/common/StandarModal.vue";
   import CopytoClipboard from "@/components/common/CopytoClipboard.vue";
   import { notificationStore } from "@/stores/notificationStore";
+  import { useCommandPanel } from "@/stores/commandPanel";
+
+const CommandPanel = useCommandPanel();
 
   const Services = ({    
     pid: "1",
@@ -165,6 +168,13 @@
   }
   
   const confirmToggle = () => {
+    CommandPanel.add({      
+      commands: [
+        { command: "sudo ufw disable", title: "Desactivar el firewall ufw", description: "Con privilegios se desactiva el firewall 'ufw' con el parametro 'disable'" },
+      ],
+      state: "success",
+      description: "Desactivar el firewall.",
+    });
     notificationStore.add('warning', 'Seguridad de la red', 'Se ha desactivado el firewall.')
     showModal.value = false
   }

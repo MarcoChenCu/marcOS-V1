@@ -16,7 +16,7 @@
         <div class="flex flex-col h-full">
           <!-- Header de la barra -->
           <div class="flex items-center justify-between px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800">
-            <h1 class="font-semibold text-gray-800 dark:text-white/90">Consola del sistema</h1><!--Titulo muy a la izquierda-->            
+            <h1 class="font-semibold text-gray-800 dark:text-white/90">Registro de comandos</h1><!--Titulo muy a la izquierda-->            
             <!--Boton expandir panel-->
             <button
               @click="toggleCollapse"
@@ -53,33 +53,28 @@
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                  <!--Fila - Ciclo de los comandos/acciones -->
                   <tr
                     v-for="(command, index) in CommandList"
                     :key="index"
                     class="border-t border-gray-100 dark:border-gray-800"
                   >
-                    <!--Fecha en formato estandar-->
                     <td class="px-5 py-4 sm:px-6">
-                      <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ command.datetime }}</p>
+                      <p class="text-gray-500 dark:text-gray-400">{{ command.datetime }}</p>
                     </td>
-                    <!--Nombre de usuario-->
                     <td class="px-5 py-4 sm:px-6">
-                      <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ command.user }}</p>
+                      <p class="text-gray-500 dark:text-gray-400">{{ command.user }}</p>
                     </td>
-                    <!--Comandos-->
-                    <td class="px-5 py-4 sm:px-6">              
-                      <!--Aqui deberia haber un ciclo for para los comandos-->
-                      <div                  
-                        class="flex flex-col gap-2">
+                    <td class="px-5 py-4 sm:px-6">
+                      <div class="flex flex-col gap-1">
                         <p
-                        v-for="(commandEx, i) in command.commands"
-                        :key="i"
-                        class="text-gray-500 text-theme-sm dark:text-gray-400"
-                        >{{ commandEx.command }}</p>                
-                      </div>              
+                          v-for="(cmd, i) in command.commands"
+                          :key="i"
+                          class="text-gray-500 dark:text-gray-400"
+                        >
+                          {{ cmd.command }}
+                        </p>
+                      </div>
                     </td>
-                    <!--Estado - Reconfigurar para mostrar facilmente el resultado de la ejecucion-->
                     <td class="px-5 py-4 sm:px-6">
                       <span
                         :class="[
@@ -92,41 +87,39 @@
                           },
                         ]"
                       >
-                        {{ command.state ==='success' ? 'Éxito' : 'Error' }}
+                        {{ command.state === 'success' ? 'Éxito' : 'Error' }}
                       </span>
                     </td>
                     <td class="px-5 py-4 sm:px-6">
-                      <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ command.description }}</p>
+                      <p class="text-gray-500 dark:text-gray-400">{{ command.description }}</p>
                     </td>
-                    <!--Llamar modal-->
+
+                    <!-- Botón -->
                     <td class="px-4 py-4 sm:px-6">
                       <button
-                      @click="showInfoModal=true"
-                      class="inline-flex items-center justify-center rounded-lg transition px-1 py-1 text-sm bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03] dark:hover:text-gray-300"
-                    >
-                    <InfoIcon/>
-                    </button><!--Boton visible-->
+                        @click="openModal(command)"
+                        class="inline-flex items-center justify-center rounded-lg transition px-1 py-1 text-sm bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03] dark:hover:text-gray-300"
+                      >
+                        <InfoIcon />
+                      </button>
                     </td>
-                    <!--Modal info comandos-->
-                    <CommandModal
-                      :visible="showInfoModal"
-                      description=""
-                      @close="showInfoModal=false"
-                      :commandInfo="command"
-                      :commandList="command.commands"
-                    />
-                    <!--Fin modal-->
                   </tr>
                 </tbody>
               </table>
             </div>
-          </div>
+          </div><!--Fin contenido-->
         </div>
       </pane>
     </splitpanes>    
   </div>
-  <!--Modal formulario agregar servicio-->
- 
+  <!--Modal formulario agregar servicio-->   
+  <CommandModal
+    v-if="showInfoModal"
+    :visible="showInfoModal"
+    :commandInfo="selectedCommand"
+    @close="showInfoModal = false"
+    description=""
+  />
 </template>
 
 <script setup>
@@ -134,14 +127,26 @@ import { ref, watch } from 'vue'
 import { Splitpanes, Pane } from 'splitpanes'
 import { ChevronDownIcon, InfoIcon } from "../../icons";
 import CommandModal from '../StatusPanel/CommandModal.vue'
+import { useCommandPanel } from "@/stores/commandPanel";
+/*Administracion de comandos */
+const CommandPanel = useCommandPanel();
+const CommandList = CommandPanel.state.logs;
 
+
+//Modal informacion comando
 const showInfoModal = ref(false)
+const selectedCommand = ref(null)
+
+const openModal = (command) => {
+  selectedCommand.value = command;
+  showInfoModal.value = true;
+};
 
 const props = defineProps({
   isExpanded: Boolean,
   isHovered: Boolean
 })
-
+/*
 const CommandList =[
   {
     datetime: '22/10/25 14:28:55', 
@@ -154,7 +159,8 @@ const CommandList =[
       }
     ],
     state: 'success',
-    description: 'Actualizacion de paquetes antes de instalar software o acutalizaciones del sistema.'    
+    description: 'Actualizacion de paquetes antes de instalar software o acutalizaciones del sistema.',
+    output: 'Although updates are thoroughly tested before they get released at all, sometimes bugs can be hidden well enough to escape our attention and make it into a release – especially in highly specific use cases that we didn’t know we needed to test. This can obviously cause problems for our users, and used to be the norm before we phased updates through apt' 
   },
   {
     datetime: '20/10/25 08:28:55', 
@@ -167,7 +173,8 @@ const CommandList =[
       }
     ],
     state: 'success',
-    description: 'Lectura del registro de autenticación.'
+    description: 'Lectura del registro de autenticación.',
+    output: 'OK'
   },
   {
     datetime: '12/08/25 08:28:55', 
@@ -180,7 +187,8 @@ const CommandList =[
       }
     ],
     state: 'error',
-    description: 'Lectura del registro de autenticación.'
+    description: 'Lectura del registro de autenticación.',
+    output: 'TASK ERROR please check the manual'
   },
   {
     datetime: '12/08/25 08:28:55', 
@@ -194,14 +202,16 @@ const CommandList =[
       {
         command: 'sudo netplan apply',
         title: 'Aplicar cambios de red',
-        description: 'Con privilegios se aplican los cambios en el archivo de red.'
+        description: 'Con privilegios se aplican los cambios en el archivo de red.',
+        output: 'Task OK'
       }
     ],
     state: 'success',
-    description: 'Modificacion del archivo de red y aplicacion de cambios.'
+    description: 'Modificacion del archivo de red y aplicacion de cambios.',
+    output: 'OK Ok :D'
   }
 ]
-
+*/
 const height = ref(200)
 const collapsed = ref(false)
 const emit = defineEmits(['update:height'])

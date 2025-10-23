@@ -38,9 +38,9 @@
                 'rounded-full px-2 py-0.5 text-theme-xs font-medium',
                 {
                   'bg-success-50 text-success-700 dark:bg-success-500/15 dark:text-success-500':
-                    commandInfo.state === 'success',
-                    'bg-error-50 text-error-700 dark:bg-error-500/15 dark:text-error-500':
-                    commandInfo.state === 'error',
+                  commandInfo.state === 'success',
+                  'bg-error-50 text-error-700 dark:bg-error-500/15 dark:text-error-500':
+                  commandInfo.state === 'error',
                 },
               ]"
             >
@@ -60,14 +60,31 @@
             <p class="text-sm text-gray-500 dark:text-gray-400">{{ commandInfo.description }}</p>            
           </div>
 
-          <h4 class="mb-2 mt-4 text-xl font-semibold text-gray-800 dark:text-white/90">
+          <h4 class="mb-2 mt-6 text-xl font-semibold text-gray-800 dark:text-white/90">
             Comandos
           </h4>
-          <div v-for="(commands, index) in commandList" class="flex gap-4 mb-4">
-            <p class="text-sm text-gray-500 dark:text-gray-400"><strong>Comando:</strong></p>
-            <p class="text-sm text-gray-500 dark:text-gray-400">{{ commands.command }}</p>            
-          </div>
-
+          <!--Mostrar los comandos en elementos CopytoClipboard-->
+          <div v-for="(commands, index) in commandInfo.commands" :key="index" class="flex gap-4 mb-4">
+            <CopytoClipboard
+              :title='commands.title'
+              :text='commands.command'
+              :comment='commands.description'
+            />
+          </div><!--Comandos-->
+          <!-- Salida del comando -->
+          <div class="w-full mt-2 mb-2">
+            <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+              Salida:
+            </label>
+            <!--Contenido del archivo netplan-->
+            <textarea        
+              placeholder="[Sin_salida]"
+              :value="commandInfo.output"
+              rows="6"
+              disabled
+              class="dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:shadow-focus-ring focus:outline-hidden focus:ring-0 disabled:border-gray-100 disabled:bg-gray-50 disabled:placeholder:text-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 dark:disabled:border-gray-800 dark:disabled:bg-white/[0.03] dark:disabled:placeholder:text-white/15"
+            ></textarea>                
+          </div><!--Fin salida del comando-->
         </div>
       </div>
     </template>
@@ -76,6 +93,7 @@
 
 <script setup lang>
 import Modal from "../profile/Modal.vue"
+import CopytoClipboard from "../common/CopytoClipboard.vue"
 
 const props = defineProps({
   visible: {
