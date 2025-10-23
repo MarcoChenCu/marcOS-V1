@@ -6,8 +6,7 @@
       class="min-h-screen rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
       <!--Descripcion-->      
       <p class="text-sm text-gray-500 dark:text-gray-400 sm:text-base">
-        Start putting content on grids or panels, you can also use different
-        combinations of grids.Please check out the dashboard and other pages
+        Para instalar programas en Ubuntu Server, la forma más común es usar el gestor de paquetes <strong>apt</strong>.
       </p>    
       <!--Contenedor Apss-->
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-6 mt-6">

@@ -24,11 +24,9 @@ const hasSystemData = computed(() => !!props.system?.so)
         </div>
     </div>
     <!-- Información del sistema -->
-    <div class="px-5 pt-5 bg-white shadow-default rounded-2xl pb-7 dark:bg-gray-900 sm:px-6 sm:pt-6 items-center">
+    <div class="px-5 pt-5 bg-white shadow-default rounded-2xl pb-7 dark:bg-gray-900 sm:px-6 sm:pt-6">
       <template v-if="hasSystemData">
-        
-
-        <div class="flex items-center mt-2">
+        <div class="flex items-center mt-6">
           <h3 class="text-md font-semibold text-gray-800 dark:text-white/90">Sistema operativo:&nbsp;</h3>
           <p class="text-md text-gray-500 dark:text-gray-400">{{ system.so }}</p>
         </div>
@@ -60,7 +58,7 @@ const hasSystemData = computed(() => !!props.system?.so)
           </p>
         </div>
 
-        <div class="flex items-center mt-2 mb-13" v-if="system.time?.local">
+        <div class="flex items-center mt-2 mb-9" v-if="system.time?.local">
           <h3 class="text-md font-semibold text-gray-800 dark:text-white/90">Hora del sistema:&nbsp;</h3>
           <p class="text-md text-gray-500 dark:text-gray-400">{{ system.time.local }}</p>
         </div>
