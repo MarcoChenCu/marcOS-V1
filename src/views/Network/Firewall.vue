@@ -64,11 +64,10 @@
                 <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ service.command }}</p>
               </td>
               <td class="py-3 text-left">
-                <Button class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-green-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
-                 variant="error" 
-                 size="md">
-                  Acciones
-                </Button>
+                <button                  
+                  class="inline-flex items-center justify-center rounded-lg transition px-1 py-1 text-sm bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03] dark:hover:text-gray-300">
+                  <InfoIcon />
+                </button>
               </td>
             </tr>
           </tbody>      
@@ -146,6 +145,7 @@
   import CopytoClipboard from "@/components/common/CopytoClipboard.vue";
   import { notificationStore } from "@/stores/notificationStore";
   import { useCommandPanel } from "@/stores/commandPanel";
+  import { InfoIcon } from "@/icons";
 
 const CommandPanel = useCommandPanel();
 

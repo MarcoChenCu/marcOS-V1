@@ -12,9 +12,7 @@
       v-if="dropdownOpen"
       class="absolute -right-[240px] mt-[17px] flex h-auto w-[200px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark sm:w-[250px] lg:right-0"
     >
-      <div
-        class="flex items-center justify-between pb-3 mb-3 border-b border-gray-100 dark:border-gray-800"
-      >
+      <div class="flex items-center justify-between pb-3 mb-3 border-b border-gray-100 dark:border-gray-800">
         <h5 class="text-lg font-semibold text-gray-800 dark:text-white/90">Acciones</h5>
 
         <button @click="closeDropdown" class="text-gray-500 dark:text-gray-400">
@@ -117,12 +115,6 @@ const handleClickOutside = (event) => {
   }
 }
 
-const handleItemClick = (event) => {
-  event.preventDefault()
-  // Handle the item click action here
-  console.log('Notification item clicked')
-  closeDropdown()
-}
 //Reiniciar el sistema
 const Restart=()=>{
   CommandPanel.add({
