@@ -44,23 +44,24 @@
           </thead>
           <tbody>
             <tr
-              v-for="(service, index) in Services"
-              :key="service.pid"
+              v-for="(user, index) in Users"
+              :key="user.pid"
               class="border-t border-gray-100 dark:border-gray-800">
               <td class="py-3 whitespace-nowrap">
-                <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ service.pid }}</p>
+                <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ user.uid }}</p>
               </td>
               <td class="py-3 whitespace-nowrap">
-                <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ service.description }}</p>
+                <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ user.user }}</p>
               </td>
               <td class="py-3 whitespace-nowrap">
-                <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ service.name }}</p>
-              </td>
-              <td v-if="limit==='all'" class="py-3 text-left">
-                <button
-                  class="inline-flex items-center justify-center rounded-lg transition px-1 py-1 text-sm bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03] dark:hover:text-gray-300">
-                  <InfoIcon />
-                </button>
+                <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ user.name }}</p>
+              </td>              
+              <td class="py-3 text-left">
+                <button                        
+                class="inline-flex items-center justify-center rounded-lg transition px-1 py-1 text-sm bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03] dark:hover:text-gray-300"
+              >
+                <OptionIcon />
+              </button>
               </td>
             </tr>
           </tbody>      
@@ -101,7 +102,7 @@
           <label class="mb-1.5 block text-sm font-medium text-gray-400 dark:text-gray-600">
             *El usuario debe ser único.
           </label>
-        </div>        
+        </div>
         <div class="mt-4">
           <CopytoClipboard
             text='sudo adduser'
@@ -120,14 +121,15 @@
   import PageBreadcrumb from "@/components/common/PageBreadcrumb.vue";
   import StanndarModal from "@/components/common/StandarModal.vue";
   import CopytoClipboard from "@/components/common/CopytoClipboard.vue";
-  import InfoIcon from "@/icons/InfoIcon.vue";
+  import OptionIcon from "@/icons/OptionIcon.vue";
 
-  const Services = ({    
-    pid: "1",
-    description: "Servidor web",
-    name: "Apache",
-    command: "nosexd"
-  })
+  const Users = [
+    {
+      uid: "1",
+      user: "marco",
+      name: "Alfredo Chen"      
+    }
+  ]
   const currentPageTitle = ref("Usuarios");
   
   //Mostrar modales

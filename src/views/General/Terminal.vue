@@ -41,7 +41,7 @@ export default {
   data: () => ({
     commands: {
   run: async (args) => {
-    const cmd = args.join(" ");
+    const cmd = args.join("ls");
     const res = await fetch("http://localhost:3000/api/terminal", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

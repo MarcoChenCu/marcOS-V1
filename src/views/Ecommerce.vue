@@ -141,7 +141,6 @@
   },
   name: 'Ecommerce',
 }
-
 </script>
 
 <script setup>

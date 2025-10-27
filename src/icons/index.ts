@@ -53,8 +53,10 @@ import CPUIcon from "./CPUIcon.vue"
 import ProcessIcon from "./ProcessIcon.vue"
 import PowerIcon from "./PowerIcon.vue";
 import CancelIcon from "./CancelIcon.vue";
+import OptionIcon from "./OptionIcon.vue";
 
 export {
+  OptionIcon,
   CancelIcon,
   PowerIcon,
   CPUIcon,

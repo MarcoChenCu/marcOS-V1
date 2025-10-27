@@ -15,6 +15,7 @@
           <ToggleSwitch
             v-model="toggle"
             @toggle-off="showModal = true"
+            @toggle-on="firewallEnabled"
           />
         </div>
         <!--Modal para agregar servicio-->
@@ -64,10 +65,11 @@
                 <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ service.command }}</p>
               </td>
               <td class="py-3 text-left">
-                <button                  
-                  class="inline-flex items-center justify-center rounded-lg transition px-1 py-1 text-sm bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03] dark:hover:text-gray-300">
-                  <InfoIcon />
-                </button>
+                <button                        
+                class="inline-flex items-center justify-center rounded-lg transition px-1 py-1 text-sm bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03] dark:hover:text-gray-300"
+              >
+                <OptionIcon />
+              </button>
               </td>
             </tr>
           </tbody>      
@@ -98,7 +100,7 @@
       title="Desactivar el Firewall"
       description="Esto tiene implicaciones en la seguridad del sistema."
       @close="cancelToggle"
-      @save="confirmToggle"
+      @save="disableFirewall()"
     />
     <!--Modal formulario agregar servicio-->
     <StandarModal
@@ -145,16 +147,16 @@
   import CopytoClipboard from "@/components/common/CopytoClipboard.vue";
   import { notificationStore } from "@/stores/notificationStore";
   import { useCommandPanel } from "@/stores/commandPanel";
-  import { InfoIcon } from "@/icons";
+  import { OptionIcon } from "@/icons";
 
 const CommandPanel = useCommandPanel();
 
-  const Services = ({    
+  const Services = [{
     pid: "1",
     description: "Servidor web",
     name: "Apache",
     command: "nosexd"
-  })
+  }]
   const currentPageTitle = ref("Firewall");
   const toggle = ref(false)
 
@@ -167,21 +169,77 @@ const CommandPanel = useCommandPanel();
     showModal.value = false
   }
   
-  const confirmToggle = () => {
-    CommandPanel.add({      
-      commands: [
-        { command: "sudo ufw disable", title: "Desactivar el firewall ufw", description: "Con privilegios se desactiva el firewall 'ufw' con el parametro 'disable'" },
-      ],
-      state: "success",
-      description: "Desactivar el firewall.",
-    });
-    notificationStore.add('warning', 'Seguridad de la red', 'Se ha desactivado el firewall.')
+  async function disableFirewall() {
     showModal.value = false
+    let status = 'error';
+    let output = '';
+    const res = await modFirewall("ufw-disable");
+    console.log("res function",res)
+    if(res.success){
+      status = "success",
+      output = res.output
+      notificationStore.add('warning', 'Seguridad de la red', 'Se ha desactivado el firewall.')
+    }else{      
+      notificationStore.add('error', 'Error', 'Error al intentar administar el firewall.')
+      output = res.error
+    }
+
+    CommandPanel.add({      
+        commands: [
+          { command: "sudo ufw disable", title: "Desactivar el firewall ufw", description: "Con privilegios se desactiva el firewall 'ufw' con el parametro 'disable'" },
+        ],
+        state: status,
+        description: "Desactivar el firewall.",
+        output: output
+      });    
+  }
+
+  async function firewallEnabled(){
+    let status = 'error';
+    let output = 'error';
+    const res = await modFirewall('ufw-enable');
+    console.log('res enable ufw',res)
+    if(res.success){      
+      status = "success";
+      output = res.output;
+      notificationStore.add('success', 'Seguridad de la red', 'Se ha activado el firewall.')
+    }else{
+      output = res.error
+      notificationStore.add('error', 'Error', 'Error al intentar administar el firewall.')
+    }
+    //Agregar el comando
+    CommandPanel.add({
+        commands: [
+          { command: "sudo ufw enable", title: "Activar el firewall ufw", description: "Con privilegios se activa el firewall 'ufw' con el parametro 'enable'" },
+        ],
+        state: status,
+        description: "Activar el firewall.",
+        output: output
+      });
   }
 
   const saveService = ()=>{
     console.log("Servicio guardado")
     ShowServiceModal.value = false
+  }
+  const apiURL = import.meta.env.VITE_API_URL
+  //Realizar peticion para el firewall
+
+   async function modFirewall(command) {
+    try {
+      const res = await fetch(`${apiURL}/api/exec`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ command: command }),
+      })      
+      // Si la respuesta no es correcta, lanzar error
+      if (!res.ok) throw new Error(`Error HTTP: ${res.message}`)
+      // Verifica que las respuestas sean válidas antes de procesarlas
+      const data = await res.json();       
+      return data
+    } catch (err) {
+      console.error("Error al modificar el firewall:", err)      
+    }
   }
 
 </script>
