@@ -1,11 +1,9 @@
 // backend/src/services/exec.service.js
 import { spawn } from 'child_process'
-import { ALLOWED_COMMANDS } from '../utils/commandWhitelist.js'
-
+import { ALLOWED_COMMANDS } from '../utils/firewallWhiteList.js'                                    
 export async function runCommandSafe(commandKey, extraArgs = []) {
   const command = ALLOWED_COMMANDS[commandKey]
-  if (!command) {
-    console.log(commandKey)
+  if (!command) {    
     throw new Error('Comando no permitido')
   }
 

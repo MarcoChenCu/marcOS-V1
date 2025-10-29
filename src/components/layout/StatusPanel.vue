@@ -82,6 +82,8 @@
                           {
                             'bg-success-50 text-success-700 dark:bg-success-500/15 dark:text-success-500':
                               command.state === 'success',
+                            'bg-warning-50 text-warning-700 dark:bg-warning-500/15 dark:text-warning-400':
+                              command.state === 'warning',
                             'bg-error-50 text-error-700 dark:bg-error-500/15 dark:text-error-500':
                               command.state === 'error',
                           },
@@ -146,72 +148,7 @@ const props = defineProps({
   isExpanded: Boolean,
   isHovered: Boolean
 })
-/*
-const CommandList =[
-  {
-    datetime: '22/10/25 14:28:55', 
-    user: 'marco', 
-    commands:[
-      {
-        command: 'sudo apt update',
-        title: 'Actualizar el sistema',
-        description: 'Comando para actualizar los repositorios.'
-      }
-    ],
-    state: 'success',
-    description: 'Actualizacion de paquetes antes de instalar software o acutalizaciones del sistema.',
-    output: 'Although updates are thoroughly tested before they get released at all, sometimes bugs can be hidden well enough to escape our attention and make it into a release – especially in highly specific use cases that we didn’t know we needed to test. This can obviously cause problems for our users, and used to be the norm before we phased updates through apt' 
-  },
-  {
-    datetime: '20/10/25 08:28:55', 
-    user: 'root', 
-    commands:[
-      {
-        command: 'cat /var/log/auth.log',
-        title: 'Leer registro',
-        description: 'Con el comando "cat" se lee un archivo en la ruta específicada.'
-      }
-    ],
-    state: 'success',
-    description: 'Lectura del registro de autenticación.',
-    output: 'OK'
-  },
-  {
-    datetime: '12/08/25 08:28:55', 
-    user: 'sumit', 
-    commands:[
-      {
-        command: 'cat /var/log/auth.log',
-        title: 'Leer registro',
-        description: 'Con el comando "cat" se lee un archivo en la ruta específicada.'
-      }
-    ],
-    state: 'error',
-    description: 'Lectura del registro de autenticación.',
-    output: 'TASK ERROR please check the manual'
-  },
-  {
-    datetime: '12/08/25 08:28:55', 
-    user: 'sumit', 
-    commands:[
-      {
-        command: 'sudo nano /etc/netplan/50-netplan.yaml',
-        title: 'Editar archivo de red',
-        description: 'Modificar el archivo de red con el el editor "nano". El comando "sudo" es necesario porque se requieren privilegios para realizar esta accion.'
-      },
-      {
-        command: 'sudo netplan apply',
-        title: 'Aplicar cambios de red',
-        description: 'Con privilegios se aplican los cambios en el archivo de red.',
-        output: 'Task OK'
-      }
-    ],
-    state: 'success',
-    description: 'Modificacion del archivo de red y aplicacion de cambios.',
-    output: 'OK Ok :D'
-  }
-]
-*/
+
 const height = ref(200)
 const collapsed = ref(false)
 const emit = defineEmits(['update:height'])

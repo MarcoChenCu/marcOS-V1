@@ -30,5 +30,11 @@ export const ALLOWED_COMMANDS = {
     description: 'Permite el tráfico en un puerto o servicio.',
     allowParams: true // Permitir argumentos adicionales
   },
+  'ufw-delete-allow': {
+    cmd: 'sudo',
+    args: ['ufw', 'delete', 'allow'],
+    description: 'Eliminar regla del firewall.',
+    allowParams: true // Permitir argumentos adicionales
+  },
 }
 
