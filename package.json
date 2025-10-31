@@ -27,6 +27,7 @@
     "bootstrap": "^4.6.2",
     "dropzone": "^6.0.0-beta.2",
     "flatpickr": "^4.6.13",
+    "js-yaml": "^4.1.0",
     "jsvectormap": "^1.6.0",
     "lucide-vue-next": "^0.474.0",
     "splitpanes": "^4.0.4",

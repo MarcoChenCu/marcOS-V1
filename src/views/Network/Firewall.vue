@@ -71,7 +71,7 @@
               </td>
               <td class="py-3 text-left">
                 <button
-                @click = "showRemoveModal(service.name)"
+                @click = "showRemoveModal(service)"
                 class="inline-flex items-center justify-center rounded-lg transition px-1 py-1 text-sm bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03] dark:hover:text-gray-300"
               >                
                 <TrashIcon />
@@ -200,7 +200,16 @@
   }
   // Eliminar servicio
   async function removeService() {
-    const currentService = serviceInfo.value?.trim() || '' 
+
+    let currentService = '' 
+    if(serviceInfo.value.name!='-' && serviceInfo.value.name!='v6'){
+      currentService = serviceInfo.value.name?.trim()
+    }else if(serviceInfo.value.tcp!='-'){
+      currentService = serviceInfo.value.tcp?.trim()
+    }
+    else if(serviceInfo.value.udp!='-'){
+      currentService = serviceInfo.value.udp?.trim()
+    }
     let data = {}
 
     showRemoveRuleModal.value = false

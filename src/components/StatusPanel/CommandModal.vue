@@ -77,14 +77,14 @@
             <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
               Salida:
             </label>
-            <!--Contenido del archivo netplan-->
+            <!--Salida -->
             <textarea        
-              placeholder="[Sin_salida]"
-              :value="commands.output"
-              rows="6"
-              disabled
-              class="dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:shadow-focus-ring focus:outline-hidden focus:ring-0 disabled:border-gray-100 disabled:bg-gray-50 disabled:placeholder:text-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 dark:disabled:border-gray-800 dark:disabled:bg-white/[0.03] dark:disabled:placeholder:text-white/15"
-              ></textarea>                
+            placeholder="[Sin_salida]"
+            :value="commands.output"
+            rows="6"
+            disabled
+            class="dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:shadow-focus-ring focus:outline-hidden focus:ring-0 disabled:border-gray-100 disabled:bg-gray-50 disabled:placeholder:text-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 dark:disabled:border-gray-800 dark:disabled:bg-white/[0.03] dark:disabled:placeholder:text-white/15"
+            ></textarea>
             </div><!--Fin salida del comando-->
           </div><!--Comandos-->
         </div>
@@ -96,6 +96,8 @@
 <script setup lang>
 import Modal from "../profile/Modal.vue"
 import CopytoClipboard from "../common/CopytoClipboard.vue"
+import TextAreaCC from "../common/TextAreaCopytoClipboard.vue"
+
 
 const props = defineProps({
   visible: {

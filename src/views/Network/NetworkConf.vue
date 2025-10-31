@@ -5,23 +5,23 @@
     <div class="rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12 mb-6">
       <h3 class="mb-4 font-semibold text-gray-800 text-theme-xl dark:text-white/90 sm:text-2xl">
         Interfaces
-      </h3>      
+      </h3>
       <p class="text-sm text-gray-500 dark:text-gray-400 sm:text-base">
         El sistema identifica las interfaces Ethernet utilizando nombres de interfaz de red predecibles. 
         Estos nombres pueden aparecer como <strong>eno1</strong> o <strong>enp0s25</strong>. 
         Sin embargo, en algunos casos una interfaz aún puede utilizar el estilo <strong>eth#</strong> de nombramiento del kernel.
-      </p>  
-      <!--Configurar interfaz-->    
+      </p>
+      <!--Configurar interfaz-->
       <!--Modal para agregar servicio-->
       <div class="flex items-center order-2 justify-between gap-4 mt-4 mb-4">
         <button
-        @click="showInterfaceModal = true"
-        class="rounded-lg bg-brand-500 px-4 py-2 text-white hover:bg-brand-600">
-        Configurar interfaz
-      </button>
-    </div>
+          @click="showInterfaceModal = true"
+          class="rounded-lg bg-brand-500 px-4 py-2 text-white hover:bg-brand-600">
+          Configurar interfaz
+        </button>
+      </div>
       <!--Componentes de interfaces-->
-      <div v-if="network && network.length" class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 mt-2">  
+      <div v-if="network && network.length" class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 mt-2">
        <!--Componente de la informacion de interfaz-->
         <div 
           v-for="(interfaceInfo, index) in network"
@@ -95,30 +95,26 @@
         que proporciona una forma de alto nivel, independiente de la distribución, de definir cómo se debe configurar la red en su sistema a través de un 
         <a class="underline cursor-pointer text-brand-500" href="https://netplan.readthedocs.io/en/stable/netplan-yaml/">archivo de configuración YAML</a>.        
       </p>
-
-      <div class="mx-auto w-full max-w-[630px] flex flex-col items-center mt-4 mb-4">
+      <!--Editar archivo netplan-->
+      <div v-if="!loading" class="mx-auto w-full max-w-[630px] flex flex-col items-center mt-4 mb-4">
         <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
           Archivo en /etc/netplan/50-cloud-init.yaml
         </label>
         <!--Ejemplo-->
-        <textarea        
-          placeholder="Enter a description..."
-          value="network:
-  version: 2
-  renderer: networkd
-  ethernets:
-    eth_lan0:
-      dhcp4: true
-        match:
-          macaddress: 00:11:22:33:44:55
-        set-name: eth_lan0"        
-          rows="6"      
-          spellcheck="false"              
+        <textarea
+          v-model="netplanInfo"
+          @keydown="handleTab"
+          placeholder="Ingrese la configuración..."                    
+          rows="6"
+          spellcheck="false"
           class="min-h-54 dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:shadow-focus-ring focus:outline-hidden focus:ring-0 disabled:border-gray-100 disabled:bg-gray-50 disabled:placeholder:text-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 dark:disabled:border-gray-800 dark:disabled:bg-white/[0.03] dark:disabled:placeholder:text-white/15"
         ></textarea> 
+        <label class="mb-1.5 block text-sm font-medium text-gray-400 dark:text-gray-600">
+          *La sintaxis de YAML depende en gran medida del uso de sangrías y del número de espacios para representar la estructura de los datos. Si el formato no se aplica correctamente las configuración de red no se aplicará.
+        </label>
         <div class="flex items-center mt-4 mb-4 gap-4">
-          <Button variant="primary" size="md" @click="saveNeplanFile()">
-            <div v-if="false"><!--Configurar spinner al guardar-->
+          <Button variant="primary" size="md" @click="saveNetplan()">
+            <div v-if="saving"><!--Configurar spinner al guardar-->
               <svg
                 width="15"
                 height="15"
@@ -143,9 +139,13 @@
             </div>
               Guardar
           </Button>
-          <Button variant="error" size="md">Cancelar</Button>
+          <!--Button variant="error" size="md">Cancelar</Button-->
         </div>
-    </div>
+        <a class="underline cursor-pointer text-brand-500" href="https://documentation.ubuntu.com/server/explanation/networking/configuring-networks/">Configuración de red Ubuntu Server</a>
+      </div><!-- Fin editar archivo netplan-->
+      <!--spinner-->
+      <Spinner v-else />
+      <!--spinner-->
       <!--Titulo--> 
       <h3 class="mb-4 mt-4 font-semibold text-gray-800 text-theme-xl dark:text-white/90 sm:text-2xl">
         Configuración desde la terminal
@@ -177,7 +177,7 @@
         </label>
         <!--Contenido del archivo netplan-->
         <textarea        
-          placeholder="Enter a description..."
+          placeholder="Ingrese la configuración..."
           value="network:
   version: 2
   ethernets:
@@ -192,11 +192,7 @@
           rows="6"
           disabled
           class="min-h-54 dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:shadow-focus-ring focus:outline-hidden focus:ring-0 disabled:border-gray-100 disabled:bg-gray-50 disabled:placeholder:text-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 dark:disabled:border-gray-800 dark:disabled:bg-white/[0.03] dark:disabled:placeholder:text-white/15"
-        ></textarea>
-        <label class="mb-1.5 block text-sm font-medium text-gray-400 dark:text-gray-600">
-          *La sintaxis de YAML depende en gran medida del uso de sangrías y del número de espacios para representar la estructura de los datos. Si el formato no se aplica correctamente las configuración de red no se aplicará.
-        </label>
-        <a class="underline cursor-pointer text-brand-500" href="https://documentation.ubuntu.com/server/explanation/networking/configuring-networks/">Configuración de red Ubuntu Server</a>
+        ></textarea>        
       </div><!--Ejemplo archivo netplan-->
     </div><!--Fin configuracion archivo de red-->
     <!--Modal formulario agregar servicio-->
@@ -216,16 +212,16 @@
             </label>
             <div class="relative z-20 bg-transparent"><!--Contenedor select-->
               <select
-                  v-model="singleSelect"
-                  class="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                  :class="{ 'text-gray-800 dark:text-white/90': singleSelect }"
+                  v-model="indexInterface"
+                  id="interface"
+                  class="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"                  
                 >
                 <option value="0" disabled>Seleccionar interfaz</option>
                 <option 
                   v-for="(interfaceInfo, index) in network"
                   :key="interfaceInfo.ifaceName"
-                  :value="interfaceInfo.ifaceName" class="text-gray-700 dark:bg-gray-900 dark:text-gray-400">
-                  {{interfaceInfo.ifaceName}}
+                  :value="index" class="text-gray-700 dark:bg-gray-900 dark:text-gray-400">
+                  {{interfaceInfo.ifaceName}}                  
                 </option>
               </select>
               <span class="absolute z-30 text-gray-700 -translate-y-1/2 pointer-events-none right-4 top-1/2 dark:text-gray-400">
@@ -260,7 +256,7 @@
             <label class="mb-1.5 block text-sm font-medium text-gray-400 dark:text-gray-600">
               El protocolo de configuración dinámica de host (DHCP) para la asignación automática de direcciones IP.
             </label>
-          <div v-if="showConfigInterface"><!--Parametros interfaz-->
+          <div v-if="!toggle"><!--Parametros interfaz-->
             <div>
               <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-400">
                 IP:
@@ -305,10 +301,10 @@
               </label>        
             </div>   
           </div><!--Fin parametros interfaz-->
+          <p v-if="errorModal" class="mt-1.5 text-theme-xs text-error-500">Seleccione una interfaz</p>
         </div><!--Fin columna-->
       </template>
     </StandarModal>
-
   </AdminLayout>
 </template>
 
@@ -321,73 +317,206 @@
   import StandarModal from "@/components/common/StandarModal.vue";
   import ToggleSwitch from "@/components/common/ToggleSwitch.vue";
   import { notificationStore } from '@/stores/notificationStore'
-  const currentPageTitle = ref("Configuración de red");
   import { useCommandPanel } from "@/stores/commandPanel";
+  const currentPageTitle = ref("Configuración de red");
+
+  const apiURL = import.meta.env.VITE_API_URL
 
   const CommandPanel = useCommandPanel();
 
   //Modal configurar interfaz
   const toggle = ref(false)
   const showInterfaceModal = ref(false)
-  const showConfigInterface = ref(false)
+  const errorModal = ref(false)
+  const indexInterface = ref(0)
+  const loading = ref(false)
+  const saving = ref(false)
 
   const saveInterface = ()=>{
-    console.log("Guardar interfaz")
+    if(indexInterface.value===0){
+      errorModal.value = true
+      return
+    }
+    errorModal.value = false
     showInterfaceModal.value = false
-    notificationStore.add('success', 'Éxito', 'Los cambios en la interfaz se guardaron correctamente.')
+    sendStatus(false,"Configurar interfaz "+network.value[indexInterface.value].ifaceName,"OK","OK2")   
   }
 
   //Guardar cambios archivo netplan
-  const saveNeplanFile = (interfaceName)=>{
-    //Agregar comandos al StatusPanel
+  async function saveNetplan() {      
+    saving.value = true
+    //Revisar sintaxis archivo yaml
+    checkYaml(netplanInfo.value)
+    alert('enviado') //TEST
+    return 
+    try {
+    const res = await fetch(`${apiURL}/api/exec/netplan/save`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content: netplanInfo.value })
+    })
+  
+    const data = await res.json()
+    let output = ''
+    let state = false
+    if (data.success) {
+      output = data.output 
+      state = true
+    }
+    else {
+      output = data.error || 'Error desconocido al guardar el archivo.'
+      state = false
+    }    
+    //Enviar notificacion de estado
+    notificationStore.add(state ? 'success' : 'error',state ? 'Éxito' : 'Error', state ? 'Los cambios en el archivo de red se guardaron correctamente.' : "Error al guardar los cambios en el archivo de red.")
+    //Agregar comando
     CommandPanel.add({      
       commands: [
-        { command: "sudo nano /etc/netplan/50-netplan.yaml", title: "Editar archivo de red", description: "Utilizando el programa 'nano' se edita el archivo de red. El comando 'sudo' es necesario ya que se requieren privilegios para realizar esta tarea." },
-        { command: "sudo netplan apply", title: "Aplicar cambios", description: "Se aplican los cambios realizados al archivo de red al sistema." },
+        { command: "sudo nano /etc/netplan/50-netplan.yaml", title: "Editar archivo de red netplan", description: "Utilizando el programa 'nano' se edita el archivo de red. El comando 'sudo' es necesario ya que se requieren privilegios para realizar esta tarea.", output: output },       
       ],
-      state: "success",
-      description: "Editar el archivo de red netplan.",
-      output: 'OK'
+      state: state ? "success" : "error",
+      description: 'Editar la configuración de red.',      
     });
-    notificationStore.add('success', 'Éxito', 'Los cambios en el archivo de red se guardaron correctamente.')
+    //Aplicar los cambios en la red
+    if(data.success)
+      await applyNetplanChanges()
+    saving.value = false
+    } catch (err) {
+      console.error("Error al guardar Netplan:", err)
+    }
+  }
+
+  async function applyNetplanChanges() {
+    try {
+      const res = await fetch(`${apiURL}/api/exec/netplan/apply`, {
+        method: "POST"
+      })
+
+      const data = await res.json()
+      let output = ''
+      let state = false
+      if (data.success) {
+        output = data.output
+        state = true
+      } else {
+        output = data.error || 'Error desconocido al guardar el archivo.'
+      }
+
+       //Enviar notificacion de estado
+      notificationStore.add(state ? 'success' : 'error',state ? 'Éxito' : 'Error', state ? 'Los cambios en el archivo de red se aplicaron correctamente.' : "Error al aplicar los cambios en el archivo de red.")
+      //Agregar comando
+      CommandPanel.add({      
+      commands: [
+        { command: "sudo netplan apply", title: "Aplicar cambios al archivo de red", description: "Utilizando el comando 'netplan' y el parámetro 'apply' se aplican los cambios a la configuración de red del sistema.", output: output },       
+      ],
+      state: state ? "success" : "error",
+      description: 'Aplicar cambios a la configuración de red.',      
+    });
+    } catch (err) {
+      console.error("Error al aplicar Netplan:", err)
+    }
+  }
+
+
+  const sendStatus=(state,desc,output1,output2)=>{
+    CommandPanel.add({
+      commands: [
+        { command: "sudo nano /etc/netplan/50-netplan.yaml", title: "Editar archivo de red", description: "Utilizando el programa 'nano' se edita el archivo de red. El comando 'sudo' es necesario ya que se requieren privilegios para realizar esta tarea.", output: output1 || '' },
+        { command: "sudo netplan apply", title: "Aplicar cambios", description: "Se aplican los cambios realizados al archivo de red al sistema.", output: output2 || '' },
+      ],
+      state: state ? "success" : "error",
+      description: desc,      
+    });
+    notificationStore.add(state ? 'success' : 'error',state ? 'Éxito' : 'Error', state ? 'Los cambios en el archivo de red se guardaron correctamente.' : "Error al guardar los cambios en el archivo de red.")
   }
 
   //Peticiones
   import { ref, onMounted, onUnmounted } from 'vue'
-  const network = ref({})
 
-  let intervalId = null
-  const apiURL = import.meta.env.VITE_API_URL
+  const netplanInfo = ref("")
+  const network = ref({ networkData: [] })
 
   async function loadMetrics() {
+    loading.value = true
     try {
-      const res = await fetch(`${apiURL}/api/system`, { cache: "no-store" })
-      // Si la respuesta no es correcta, lanzar error
-      if (!res.ok) throw new Error(`Error HTTP: ${res.status}`)
-      // Verifica que las respuestas sean válidas antes de procesarlas
-      const networkData = res.ok ? await res.json() : {}
-      // Evita valores null o undefined    
-      network.value = networkData.network.networkInfo || {}
+      // Ejecutar ambas peticiones en paralelo
+      const [resSystem, resNetplan] = await Promise.all([
+        fetch(`${apiURL}/api/system`, { cache: "no-store" }),
+        fetch(`${apiURL}/api/exec/netplan`, { cache: "no-store" })
+      ])
+
+      // Validar respuestas individualmente
+      if (!resSystem.ok) throw new Error(`Error HTTP sistema: ${resSystem.status}`)
+      if (!resNetplan.ok) throw new Error(`Error HTTP netplan: ${resNetplan.status}`)
+
+      // Parsear JSON de ambas respuestas
+      const [systemData, netplanData] = await Promise.all([
+        resSystem.json(),
+        resNetplan.json()
+      ])
+
+      // Asignar valores de forma segura
+      network.value = systemData?.network?.networkInfo || {}
+      netplanInfo.value = netplanData?.output || "" // asegurarte de usar el campo correcto
     } catch (err) {
-      console.error("Error al obtener las interfaces:", err)
-      network.value = { networkData: [] } // evitar undefined en el template
+      console.error("Error al obtener métricas del sistema o netplan:", err)
+      // Fallbacks seguros para mantener la UI estable
+      network.value = { networkData: [] }
+      netplanInfo.value = ""
+    }
+    loading.value = false
+  }
+
+  const checkYaml=(content)=>{    
+    if (!content)
+    notificationStore.add('error','Error','El contenido del archivo no puede estar vacío')
+
+    // Validar sintaxis YAML antes de escribir
+    try {
+      yaml.load(content)
+    } catch (err) {
+      return res.status(400).json({
+        success: false,
+        error: `Error de sintaxis YAML: ${err.message}`
+      })
     }
   }
 
   onMounted(() => {
     loadMetrics()
     // Actualiza cada 5 segundos, solo si el componente está activo    
-    intervalId = setInterval(loadMetrics, 5000)
+    //intervalId = setInterval(loadMetrics, 5000)
   })
 
   onUnmounted(() => {
     // Detener las peticiones al salir de la vista
+    /*
     if (intervalId){
       clearInterval(intervalId)
       intervalId = null
-    }    
+    }
+      */
   })
 
+  function handleTab(event) {
+    if (event.key === 'Tab') {
+      event.preventDefault()
+      const textarea = event.target
+      const start = textarea.selectionStart
+      const end = textarea.selectionEnd
+
+      // Insertar tabulación (puedes usar '\t' o 2/4 espacios)
+      const tab = '\t' // usa '\t' si prefieres tab real
+      textarea.value =
+        textarea.value.substring(0, start) + tab + textarea.value.substring(end)
+
+      // Mover el cursor después de la tabulación
+      textarea.selectionStart = textarea.selectionEnd = start + tab.length
+
+      // Actualizar el modelo (v-model)
+      netplanInfo.value = textarea.value
+    }
+  }
 
   function typeConection(Type){
     if(Type==="wireless"){

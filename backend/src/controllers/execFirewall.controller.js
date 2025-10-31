@@ -25,7 +25,7 @@ export async function executeUFWCommand(req, res) {
 }
 
 export async function allowUFW(req, res){
-  const { service } = req.body  
+  const { service } = req.body
   if (!service || typeof service !== 'string') {
     return res.status(400).json({ success: false, message: 'Parámetro incorrecto', output: 'Servicio o puerto inválido' })
   }

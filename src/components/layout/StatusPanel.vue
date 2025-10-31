@@ -149,14 +149,16 @@ const props = defineProps({
   isHovered: Boolean
 })
 
-const height = ref(200)
-const collapsed = ref(false)
+// Convertir explícitamente el valor del localStorage a booleano
+const collapsed = ref(localStorage.getItem('panelCollapsed') === 'true')
+const height = ref(collapsed.value ? 40 : 200)
 const emit = defineEmits(['update:height'])
 
 watch(height, (val) => emit('update:height', val))
 
 function toggleCollapse() {
   collapsed.value = !collapsed.value
+  localStorage.setItem("panelCollapsed", collapsed.value)
   height.value = collapsed.value ? 40 : 200
 }
 

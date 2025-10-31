@@ -26,11 +26,11 @@
 
 <script setup lang="ts">
 
-interface Props {
-  title: string
-  className?: string
-  desc?: string
-}
+  interface Props {
+    title: string
+    className?: string
+    desc?: string
+  }
 
-defineProps<Props>()
+  defineProps<Props>()
 </script>

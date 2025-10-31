@@ -55,8 +55,10 @@ import PowerIcon from "./PowerIcon.vue";
 import CancelIcon from "./CancelIcon.vue";
 import OptionIcon from "./OptionIcon.vue";
 import Spinner from "./Spinner.vue";
+import Copy from "./Copy.vue";
 
 export {
+  Copy,
   Spinner,
   OptionIcon,
   CancelIcon,
