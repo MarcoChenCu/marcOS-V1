@@ -24,3 +24,57 @@ export async function executeCommand(req, res) {
   }
 }
 
+//Reiniciar 
+export async function executeReboot(req, res) {
+  try {
+    const result = await runCommandSafe('restart')    
+    res.json({
+      success: true,
+      message: `Reinicio programado correctamente.`,
+      output: result,
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al ejecutar el comando.',
+      output: error.message,
+    })
+  }
+}
+
+//Poweroff
+export async function executeReboot(req, res) {
+  try {
+    const result = await runCommandSafe('poweroff')
+    res.json({
+      success: true,
+      message: `Apagado programado correctamente.`,
+      output: result,
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al ejecutar el comando.',
+      output: error.message,
+    })
+  }
+}
+
+//Cancel Poweroff
+export async function executeCancelPoweroff(req, res) {
+  try {
+    const result = await runCommandSafe('cancel')
+    res.json({
+      success: true,
+      message: `Accion cancelada exitosamente.`,
+      output: result,
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al ejecutar el comando.',
+      output: error.message,
+    })
+  }
+}
+

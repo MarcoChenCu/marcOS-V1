@@ -346,8 +346,14 @@
   async function saveNetplan() {      
     saving.value = true
     //Revisar sintaxis archivo yaml
-    checkYaml(netplanInfo.value)
+    const respu = checkYaml(netplanInfo.value)
+    const res = await respu.json()
+
+    notificationStore.add(res.status,res.status ? 'Éxito' : "Error", res.message)
+    console.log(res)
+
     alert('enviado') //TEST
+    saving.value = false
     return 
     try {
     const res = await fetch(`${apiURL}/api/exec/netplan/save`, {
@@ -467,18 +473,20 @@
     loading.value = false
   }
 
-  const checkYaml=(content)=>{    
+  function checkYaml(content){    
     if (!content)
-    notificationStore.add('error','Error','El contenido del archivo no puede estar vacío')
+      return {status: false, message: 'El contenido del archivo no puede estar vacío'}
 
     // Validar sintaxis YAML antes de escribir
     try {
       yaml.load(content)
+      return {status: true, message: ""}
     } catch (err) {
-      return res.status(400).json({
-        success: false,
-        error: `Error de sintaxis YAML: ${err.message}`
-      })
+      
+      return {
+        status: false,
+        message: `Error de sintaxis YAML: ${err.message}`
+      }
     }
   }
 

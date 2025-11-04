@@ -6,29 +6,25 @@ export const ALLOWED_COMMANDS = {
     description: 'Desactiva el firewall UFW',
     allowParams: false
   },
-  'ufw-enable': {
+  'restart': {
     cmd: 'sudo',
-    args: ['ufw', 'enable'],
-    description: 'Activa el firewall UFW',
-    allowParams: false
+    args: ['shutdown', '-r', '+1', "'Reincio desde marcOS'"],
+    description: 'reiniciar el sistema con 1 minuto de retraso.',
+    allowParams: false // Permitir argumentos adicionales
   },
-  'ufw-status': {
+
+  'poweroff': {
     cmd: 'sudo',
-    args: ['LANG=C', 'ufw', 'status'],
-    description: 'Obtener el estado del firewall UFW',
-    allowParams: false
+    args: ['shutdown', '+1', "'apagado desde marcOS'"],
+    description: 'Apagar el sistema con 1 minuto de retraso.',
+    allowParams: false // Permitir argumentos adicionales
   },
-  'ufw-status-verbose': {
+
+  'restart': {
     cmd: 'sudo',
-    args: ['LANG=C', 'ufw', 'status', 'verbose'],
-    description: 'Obtener el estado detallado del firewall UFW',
-    allowParams: false
-  },
-  'ufw-allow': {
-    cmd: 'sudo',
-    args: ['ufw', 'allow'],
-    description: 'Permite el tráfico en un puerto o servicio.',
-    allowParams: true // Permitir argumentos adicionales
+    args: ['shutdown', '-c'],
+    description: 'Detener accion programada.',
+    allowParams: false // Permitir argumentos adicionales
   },
 }
 

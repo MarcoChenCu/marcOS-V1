@@ -93,6 +93,7 @@ import {PowerIcon, RefreshIcon, CancelIcon} from '@/icons'
 import { notificationStore } from '@/stores/notificationStore'
 import { useCommandPanel } from '@/stores/commandPanel'
 import { CanceledError } from 'axios'
+const apiURL = import.meta.env.VITE_API_URL
 const CommandPanel = useCommandPanel();
 
 const dropdownOpen = ref(false)
@@ -116,65 +117,77 @@ const handleClickOutside = (event) => {
 }
 
 //Reiniciar el sistema
-const Restart=()=>{
+async function Restart(){
+  const res = await powerActions('reboot')  
   CommandPanel.add({
     commands: [
       { command: "sudo shutdown -r +1 'Reincio desde marcOS'", 
         title: "Reiniciar el sistema con un minuto de retraso.", 
-        description: "Con privilegios se ejecuta el comando 'shutdown'. Con el parámetro '-r' se indica que debe realizar un reinicio y con el parámetro '+1' agregamos un minuto de retraso. Opcionalmente se puede agregar un mensaje para los registros." },
+        description: "Con privilegios se ejecuta el comando 'shutdown'. Con el parámetro '-r' se indica que debe realizar un reinicio y con el parámetro '+1' agregamos un minuto de retraso. Opcionalmente se puede agregar un mensaje para los registros.",
+        output: res.output || ''
+      },
     ],
-    state: "success",
+    state: res.success ? 'success' : 'error',
     description: "Reinicio del servidor.",
   });
-  notificationStore.add('warning', 'Reinicio', 'El sistema se reiniciará en 1 minuto.')
+  notificationStore.add(res.success ? 'warning' : 'Error', 'Reinicio', res.success ? 'El sistema se reiniciará en 1 minuto.' : 'Error al intentar programar el reinicio.')
   closeDropdown();
   actionStarted.value = true;
 }
 
-//Reiniciar el sistema
-const Poweroff=()=>{
-  CommandPanel.add({
-    commands: [
-      { command: "sudo shutdown +1 'Apagado desde marcOS'", 
-        title: "Apagar el sistema con un minuto de retraso", 
-        description: "Con privilegios se ejecuta el comando 'shutdown'. Con el parámetro '+1' agregamos un minuto de retraso. Opcionalmente se puede agregar un mensaje para los registros." },
-    ],
-    state: "success",
-    description: "Apagado del servidor.",
-  });
-  notificationStore.add('warning', 'Apagado', 'El sistema se apagará en 1 minuto.')
-  closeDropdown();
-  actionStarted.value = true;
-}
+  //Reiniciar el sistema
+  async function Poweroff(){
+    const res = await powerActions('poweroff')
+    CommandPanel.add({
+      commands: [
+        { command: "sudo shutdown +1 'Apagado desde marcOS'", 
+          title: "Apagar el sistema con un minuto de retraso", 
+          description: "Con privilegios se ejecuta el comando 'shutdown'. Con el parámetro '+1' agregamos un minuto de retraso. Opcionalmente se puede agregar un mensaje para los registros.",
+          output: res.output || ''
+        },
+      ],
+      state: res.success ? 'success' : 'error',
+      description: "Apagado del servidor.",
+    });
+    notificationStore.add(res.success ? 'warning' : 'error', 'Apagado', res.success ? 'El sistema se apagará en 1 minuto.' : 'Error al intentar programar el apagado.')
+    closeDropdown();
+    actionStarted.value = true;
+  }
 
-//Cancelar Apagado/reinicio
-const StopShutdown=()=>{
-  CommandPanel.add({
-    commands: [
-      { command: "sudo shutdown -c", 
-        title: "Cancelar el reinicio/apagado programado.", 
-        description: "Con privilegios se ejecuta el comando 'shutdown' y con el parámetro '-c' se indica que se deben cancelar el reinicio/apagado programado." },
-    ],
-    state: "success",
-    description: "Cancelar reinicio/apagado del sistema.",
-  });
-  notificationStore.add('warning', 'Reinicio/Apagado cancelado', 'Se ha cancelado el reinicio/apagado del sistema.')
-  closeDropdown();
-  actionStarted.value = false;
-}
+  //Cancelar Apagado/reinicio
+  async function StopShutdown(){
+    const res = await powerActions('cancel')
+    CommandPanel.add({
+      commands: [
+        { command: "sudo shutdown -c", 
+          title: "Cancelar el reinicio/apagado programado.", 
+          description: "Con privilegios se ejecuta el comando 'shutdown' y con el parámetro '-c' se indica que se deben cancelar el reinicio/apagado programado.",
+          output: res.output || ''
+        },
+      ],
+      state: res.success ? "success" : 'error',
+      description: "Cancelar reinicio/apagado del sistema.",
+    });
+    notificationStore.add(res.success ? 'warning' : 'error', 'Reinicio/Apagado cancelado', res.success ? 'Se ha cancelado el reinicio/apagado del sistema.' : 'Error al intentar cancelar el reinicio/apagado del sistema.')
+    closeDropdown();
+    actionStarted.value = false;
+  }
+  //Ejecutar acciones de reinicio y apagado
+  async function powerActions(command) {
+    try {
+      const res = await fetch(`${apiURL}/api/exec/power/${command}`)
+      const data = await res.json()
+      return data
+    } catch (err) {
+      console.error("Error al ejecutar la acción", err)
+    }
+  }
 
-const handleViewAllClick = (event) => {
-  event.preventDefault()
-  // Handle the "View All Notification" action here
-  console.log('View All Notifications clicked')
-  closeDropdown()
-}
+  onMounted(() => {
+    document.addEventListener('click', handleClickOutside)
+  })
 
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
-})
+  onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside)
+  })
 </script>

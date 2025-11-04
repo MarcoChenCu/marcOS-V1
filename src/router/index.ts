@@ -50,6 +50,7 @@ const router = createRouter({
         requiresAuth: true,
       },
     },
+    /*Explorador de archivos para la version 2 XD      
 
     {
       path: '/terminal',
@@ -60,7 +61,6 @@ const router = createRouter({
         requriesAuth: true,
       },
     },
-    /*Explorador de archivos para la version 2 XD      
     {
       path: '/file_explorer',
       name: 'File Explorer',
@@ -130,7 +130,7 @@ const router = createRouter({
         requiresAuth: true,
       },
     },
-
+    /*
     {
       path: '/form-elements',
       name: 'Form Elements',
@@ -138,7 +138,7 @@ const router = createRouter({
       meta: {
         title: 'Form Elements',
       },
-    },    
+    }, 
     {
       path: '/alerts',
       name: 'Alerts',
@@ -155,7 +155,7 @@ const router = createRouter({
         title: 'Badge',
       },
     },
-    /*
+
     {
       path: '/buttons',
       name: 'Buttons',

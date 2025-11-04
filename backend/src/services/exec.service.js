@@ -27,7 +27,7 @@ export async function runCommandSafe(commandKey, extraArgs = []) {
     let error = ''
 
     child.stdout.on('data', data => {
-      output += data.toString()
+      output += data.toString()      
     })
 
     child.stderr.on('data', data => {

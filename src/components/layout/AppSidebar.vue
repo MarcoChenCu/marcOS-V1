@@ -261,12 +261,12 @@ const menuGroups = [
         name: "Explorador de archivos",
         path: "/file_explorer",
       },
-      */
       {
         icon: TerminalIcon,
         name: "terminal",
         path: "/terminal",
       },
+      */
       {
         icon: UpdateIcon,
         name: "Actualizaciones",
@@ -292,6 +292,7 @@ const menuGroups = [
         icon: ListIcon,
         path: "/logs",
       },
+      /*
       {
         icon: BoxCubeIcon,
         name: "Elementos",
@@ -301,6 +302,7 @@ const menuGroups = [
           { name: "Form Elements", path: "/form-elements", pro: false },            
         ],
       },
+      */
       // ... Add other menu items here
     ],
   },
