@@ -5,7 +5,6 @@ import authRoutes from "./src/routes/auth.routes.js"
 import dashboardRoutes from "./src/routes/dashboard.routes.js"
 import systemRoutes from "./src/routes/system.routes.js"
 import processRoutes from "./src/routes/process.routes.js"
-import terminalRoutes from "./src/routes/terminal.routes.js";
 import execRoutes from "./src/routes/exec.routes.js";
 const app = express()
 
@@ -18,7 +17,6 @@ app.use("/api", authRoutes)
 app.use("/api", dashboardRoutes)
 app.use("/api", systemRoutes)
 app.use("/api", processRoutes)
-app.use("/api", terminalRoutes);
 app.use("/api", execRoutes);
 
 // Middleware para 404

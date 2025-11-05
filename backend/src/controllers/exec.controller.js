@@ -43,7 +43,7 @@ export async function executeReboot(req, res) {
 }
 
 //Poweroff
-export async function executeReboot(req, res) {
+export async function executePoweroff(req, res) {
   try {
     const result = await runCommandSafe('poweroff')
     res.json({
@@ -63,7 +63,7 @@ export async function executeReboot(req, res) {
 //Cancel Poweroff
 export async function executeCancelPoweroff(req, res) {
   try {
-    const result = await runCommandSafe('cancel')
+    const result = await runCommandSafe('cancel-power')
     res.json({
       success: true,
       message: `Accion cancelada exitosamente.`,

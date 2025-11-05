@@ -1,7 +1,8 @@
 import express from 'express'
-import { executeReboot } from '../controllers/exec.controller.js'
+import { executeReboot, executePoweroff, executeCancelPoweroff } from '../controllers/exec.controller.js'
 import { executeUFWCommand, allowUFW, allowDeleteUFW} from '../controllers/execFirewall.controller.js'
 import { getNetplanFile, saveNetplanFile, applyNetplanFile } from '../controllers/execNetplan.controller.js'
+import { getLogFile } from '../controllers/execLogs.controller.js'
 const router = express.Router()
 
 // Endpoint firewall
@@ -19,6 +20,10 @@ router.post('/exec/netplan/apply', applyNetplanFile)
 router.get('/exec/power/reboot',executeReboot)
 router.get('/exec/power/poweroff',executePoweroff)
 router.get('/exec/power/cancel',executeCancelPoweroff)
+
+//Lectura de registros
+router.post('/exec/logs/read', getLogFile)
+
 
 export default router
  

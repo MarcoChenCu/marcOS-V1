@@ -23,43 +23,21 @@
           text="cat /var/log/syslog"
         />
         <!--Contenido del registro-->
-        <textarea        
+        <textarea
+          v-model="syslog"
+          ref="syslogRef"
           placeholder="[Sin registros]"
-          value="Oct 20 00:38:05 test systemd[1]: dmesg.service: Deactivated successfully.
-Oct 20 00:38:07 test ModemManager[706]: <info>  [base-manager] couldnt check support for device /sys/devices/pci0000:00/0000:00:12.0: not supported by any plugin
-Oct 20 00:38:14 test systemd[1]: NetworkManager-dispatcher.service: Deactivated successfully.
-Oct 20 00:38:28 test systemd[1]: systemd-fsckd.service: Deactivated successfully.
-Oct 20 00:38:34 test systemd-timesyncd[608]: Initial synchronization to time server [2620:2d:4000:1::41]:123 (ntp.ubuntu.com).
-Oct 20 00:38:34 test systemd[1]: systemd-hostnamed.service: Deactivated successfully.
-Oct 20 00:38:37 test systemd[1]: systemd-timedated.service: Deactivated successfully.
-Oct 20 00:42:08 test systemd[1]: Created slice User Slice of UID 1000.
-Oct 20 00:42:08 test systemd[1]: Starting User Runtime Directory /run/user/1000...
-Oct 20 00:42:08 test systemd[1]: Finished User Runtime Directory /run/user/1000.
-Oct 20 00:42:08 test systemd[1]: Starting User Manager for UID 1000...
-Oct 20 00:42:08 test systemd[920]: Queued start job for default target Main User Target.
-Oct 20 00:42:08 test systemd[920]: Created slice User Application Slice.
-Oct 20 00:42:08 test systemd[920]: Reached target Paths.
-Oct 20 00:42:08 test systemd[920]: Reached target Timers.
-Oct 20 00:42:08 test systemd[920]: Starting D-Bus User Message Bus Socket...
-Oct 20 00:42:08 test systemd[920]: Listening on GnuPG network certificate management daemon.
-Oct 20 00:42:08 test systemd[920]: Listening on GnuPG cryptographic agent and passphrase cache (access for web browsers).
-Oct 20 00:42:08 test systemd[920]: Listening on GnuPG cryptographic agent and passphrase cache (restricted).
-Oct 20 00:42:08 test systemd[920]: Listening on GnuPG cryptographic agent (ssh-agent emulation).
-Oct 20 00:42:08 test systemd[920]: Listening on GnuPG cryptographic agent and passphrase cache.
-Oct 20 00:42:08 test systemd[920]: Listening on debconf communication socket.
-Oct 20 00:42:08 test systemd[920]: Listening on REST API socket for snapd user session agent.
-Oct 20 00:42:08 test systemd[920]: Listening on D-Bus User Message Bus Socket.
-Oct 20 00:42:08 test systemd[920]: Reached target Sockets.
-Oct 20 00:42:08 test systemd[920]: Reached target Basic System.
-Oct 20 00:42:08 test systemd[920]: Reached target Main User Target.
-Oct 20 00:42:08 test systemd[920]: Startup finished in 98ms.
-Oct 20 00:42:08 test systemd[1]: Started User Manager for UID 1000.
-Oct 20 00:42:08 test systemd[1]: Started Session 1 of User marco."          
           rows="15"
           readonly
           spellcheck="false"
           class="mt-4 min-h-[100px] max-h-[400px] dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300  focus:outline-hidden focus:ring-0 disabled:border-gray-100 disabled:bg-gray-50 disabled:placeholder:text-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 dark:disabled:border-gray-800 dark:disabled:bg-white/[0.03] dark:disabled:placeholder:text-white/15"
         ></textarea>
+        <button
+          v-if="syslog.length>0"
+          @click="downloadLog('syslogLog.txt', syslog)"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm">
+          Descargar
+        </button>
       </div><!--Contenedor secundario-->
     </div><!--Fin contenedor registro-->
 
@@ -84,43 +62,21 @@ Oct 20 00:42:08 test systemd[1]: Started Session 1 of User marco."
           text="cat /var/log/debug"
         />
         <!--Contenido del registro-->
-        <textarea        
-          placeholder="[Sin registros]"
-          value="Oct 20 00:38:05 test systemd[1]: dmesg.service: Deactivated successfully.
-Oct 20 00:38:07 test ModemManager[706]: <info>  [base-manager] couldnt check support for device /sys/devices/pci0000:00/0000:00:12.0: not supported by any plugin
-Oct 20 00:38:14 test systemd[1]: NetworkManager-dispatcher.service: Deactivated successfully.
-Oct 20 00:38:28 test systemd[1]: systemd-fsckd.service: Deactivated successfully.
-Oct 20 00:38:34 test systemd-timesyncd[608]: Initial synchronization to time server [2620:2d:4000:1::41]:123 (ntp.ubuntu.com).
-Oct 20 00:38:34 test systemd[1]: systemd-hostnamed.service: Deactivated successfully.
-Oct 20 00:38:37 test systemd[1]: systemd-timedated.service: Deactivated successfully.
-Oct 20 00:42:08 test systemd[1]: Created slice User Slice of UID 1000.
-Oct 20 00:42:08 test systemd[1]: Starting User Runtime Directory /run/user/1000...
-Oct 20 00:42:08 test systemd[1]: Finished User Runtime Directory /run/user/1000.
-Oct 20 00:42:08 test systemd[1]: Starting User Manager for UID 1000...
-Oct 20 00:42:08 test systemd[920]: Queued start job for default target Main User Target.
-Oct 20 00:42:08 test systemd[920]: Created slice User Application Slice.
-Oct 20 00:42:08 test systemd[920]: Reached target Paths.
-Oct 20 00:42:08 test systemd[920]: Reached target Timers.
-Oct 20 00:42:08 test systemd[920]: Starting D-Bus User Message Bus Socket...
-Oct 20 00:42:08 test systemd[920]: Listening on GnuPG network certificate management daemon.
-Oct 20 00:42:08 test systemd[920]: Listening on GnuPG cryptographic agent and passphrase cache (access for web browsers).
-Oct 20 00:42:08 test systemd[920]: Listening on GnuPG cryptographic agent and passphrase cache (restricted).
-Oct 20 00:42:08 test systemd[920]: Listening on GnuPG cryptographic agent (ssh-agent emulation).
-Oct 20 00:42:08 test systemd[920]: Listening on GnuPG cryptographic agent and passphrase cache.
-Oct 20 00:42:08 test systemd[920]: Listening on debconf communication socket.
-Oct 20 00:42:08 test systemd[920]: Listening on REST API socket for snapd user session agent.
-Oct 20 00:42:08 test systemd[920]: Listening on D-Bus User Message Bus Socket.
-Oct 20 00:42:08 test systemd[920]: Reached target Sockets.
-Oct 20 00:42:08 test systemd[920]: Reached target Basic System.
-Oct 20 00:42:08 test systemd[920]: Reached target Main User Target.
-Oct 20 00:42:08 test systemd[920]: Startup finished in 98ms.
-Oct 20 00:42:08 test systemd[1]: Started User Manager for UID 1000.
-Oct 20 00:42:08 test systemd[1]: Started Session 1 of User marco."          
+        <textarea
+          v-model="debuglog"
+          ref="debuglogRef"
+          placeholder="[Sin registros]"        
           rows="15"
           readonly
           spellcheck="false"
           class="mt-4 min-h-[100px] max-h-[400px] dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300  focus:outline-hidden focus:ring-0 disabled:border-gray-100 disabled:bg-gray-50 disabled:placeholder:text-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 dark:disabled:border-gray-800 dark:disabled:bg-white/[0.03] dark:disabled:placeholder:text-white/15"
         ></textarea>
+        <button
+          v-if="debuglog.length>0"
+          @click="downloadLog('debugLog.txt', debuglog)"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm">
+          Descargar
+        </button>
       </div><!--Contenedor secundario-->
     </div><!--Fin Contenedor registro-->
 
@@ -146,7 +102,9 @@ Oct 20 00:42:08 test systemd[1]: Started Session 1 of User marco."
           text="cat /var/log/daemon.log"
         />
         <!--Contenido del registro-->
-        <textarea        
+        <textarea     
+          v-model="daemonlog"
+          ref="daemonlogRef"
           placeholder="[Sin registros]"
           value=""          
           rows="15"
@@ -154,6 +112,12 @@ Oct 20 00:42:08 test systemd[1]: Started Session 1 of User marco."
           spellcheck="false"
           class="mt-4 min-h-[100px] max-h-[400px] dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300  focus:outline-hidden focus:ring-0 disabled:border-gray-100 disabled:bg-gray-50 disabled:placeholder:text-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 dark:disabled:border-gray-800 dark:disabled:bg-white/[0.03] dark:disabled:placeholder:text-white/15"
         ></textarea>
+        <button
+          v-if="daemonlog.length>0"
+          @click="downloadLog('daemonLog.txt', daemonlog)"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm">
+          Descargar
+        </button>
       </div><!--Contenedor secundario-->
     </div><!--Fin Contenedor registro-->
     <!--Contenedor registro-->
@@ -178,14 +142,22 @@ Oct 20 00:42:08 test systemd[1]: Started Session 1 of User marco."
           text="cat /var/log/auth.log"
         />
         <!--Contenido del registro-->
-        <textarea        
-          placeholder="Enter a description..."
+        <textarea     
+          v-model="authlog"   
+          ref="authlogRef"
+          placeholder="[Sin registros]"
           value=""          
           rows="15"
           readonly
           spellcheck="false"
           class="mt-4 min-h-[100px] max-h-[400px] dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300  focus:outline-hidden focus:ring-0 disabled:border-gray-100 disabled:bg-gray-50 disabled:placeholder:text-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 dark:disabled:border-gray-800 dark:disabled:bg-white/[0.03] dark:disabled:placeholder:text-white/15"
         ></textarea>
+        <button
+          v-if="authlog.length>0"
+          @click="downloadLog('authLog.txt', authlog)"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm">
+          Descargar
+        </button>
       </div><!--Contenedor secundario-->
     </div><!--Fin Contenedor registro-->
 
@@ -215,12 +187,133 @@ Oct 20 00:42:08 test systemd[1]: Started Session 1 of User marco."
 </template>
 
 <script setup>
-  import { ref } from "vue";
+  import { ref, nextTick, onMounted, onUnmounted } from "vue";
   import AdminLayout from "@/components/layout/AdminLayout.vue";
   import PageBreadcrumb from "@/components/common/PageBreadcrumb.vue";
   import CopytoClipboard from "@/components/common/CopytoClipboard.vue";
+  import { notificationStore } from "@/stores/notificationStore";
+  import { useCommandPanel } from "@/stores/commandPanel";
   
   const currentPageTitle = ref("Registros");
+  const apiURL = import.meta.env.VITE_API_URL
+  const CommandPanel = useCommandPanel();
+  //Ref a los textareas
+  const syslogRef = ref(null);
+  const debuglogRef = ref(null);
+  const daemonlogRef = ref(null);
+  const authlogRef = ref(null);
+
+  //Estado de carga
+  const loading = ref(false)
+  //Estados de los logs
+  const syslog = ref('')
+  const debuglog = ref('')
+  const daemonlog = ref('')
+  const authlog = ref('')
+
+  async function fetchLogs() {
+    syslog.value = await loadLogs('syslog')
+    await scrollToBottom(syslogRef)
+    debuglog.value = await loadLogs('debug')
+    await scrollToBottom(debuglogRef)
+    daemonlog.value = await loadLogs('daemon.log')
+    await scrollToBottom(daemonlogRef)
+    authlog.value = await loadLogs('auth.log')
+    await scrollToBottom(authlogRef)
+  }
+  //Función para cargar los logs
+  async function loadLogs(fileName) {
+    loading.value = true
+    let success = false
+    let message = ''
+    let output = ''
+    let warning = false
+
+    try {
+      const response = await fetch(`${apiURL}/api/exec/logs/read`, {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filename: fileName }),
+      })
+
+      if (!response.ok) throw new Error(`Error HTTP logFile: ${response.status}`)
+
+      const fileData = await response.json()
+      success = fileData.success || false
+      message = fileData.message || ''
+      output = fileData.output || ''
+      warning = fileData.warning || false
+
+      return fileData.output || ''
+    } catch (err) {
+      message = `Error al cargar los registros: ${err.message}`
+      console.error('Error al cargar los registros (loadLogs):', err)
+      success = false
+      output = err.output
+      return ''
+    } finally {
+      // Determinar el estado visual
+      const state = success
+        ? (warning ? 'warning' : 'success')
+        : 'error'
+
+      // Notificación: solo si es error real
+      if (!success) {
+        notificationStore.add('error', 'Carga de registros', message)
+      }
+
+      // Registrar en el CommandPanel
+      CommandPanel.add({
+        commands: [
+          {
+            command: `cat /var/log/${fileName}`,
+            title: `Leer el registro ${fileName}`,
+            description:
+              "Utilizando el comando 'cat' se muestra el contenido de un archivo. Como parámetro es necesario enviar la ruta del archivo.",
+            output: warning ? message : (success ? '' : output),
+          },
+        ],
+        state,
+        description: `Lectura del archivo de registro ${fileName}`,
+      })
+
+      loading.value = false
+    }
+  }
+  // función genérica para mover scroll al final
+  async function scrollToBottom(textareaRef) {
+    await nextTick() // aseguramos que el DOM ya se actualizó
+    if (textareaRef.value) {
+      textareaRef.value.scrollTop = textareaRef.value.scrollHeight
+    }
+  }
+
+  // función para descargar logs
+  function downloadLog(filename, content) {
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" })
+    const link = document.createElement("a")
+    link.href = URL.createObjectURL(blob)
+    link.download = filename
+    link.click()
+    URL.revokeObjectURL(link.href)
+  }
+
+  onMounted(() => {
+    fetchLogs()
+    // Actualiza cada 5 segundos, solo si el componente está activo    
+    //intervalId = setInterval(loadLogs, 5000)
+  })
+
+  onUnmounted(() => {
+    // Detener las peticiones al salir de la vista
+    /** 
+     * 
+     if (intervalId){
+      clearInterval(intervalId)
+      intervalId = null
+    }    
+    */
+  })
 </script>
 
 <style></style>

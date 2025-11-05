@@ -20,7 +20,7 @@ export const ALLOWED_COMMANDS = {
     allowParams: false // Permitir argumentos adicionales
   },
 
-  'restart': {
+  'cancel-power': {
     cmd: 'sudo',
     args: ['shutdown', '-c'],
     description: 'Detener accion programada.',
