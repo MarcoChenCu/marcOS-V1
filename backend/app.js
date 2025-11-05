@@ -6,6 +6,7 @@ import dashboardRoutes from "./src/routes/dashboard.routes.js"
 import systemRoutes from "./src/routes/system.routes.js"
 import processRoutes from "./src/routes/process.routes.js"
 import execRoutes from "./src/routes/exec.routes.js";
+import updateRoutes from "./src/routes/update.routes.js";
 const app = express()
 
 // CORS (ajusta origen si lo deseas)
@@ -18,6 +19,7 @@ app.use("/api", dashboardRoutes)
 app.use("/api", systemRoutes)
 app.use("/api", processRoutes)
 app.use("/api", execRoutes);
+app.use("/api", updateRoutes);
 
 // Middleware para 404
 app.use((req, res) => {

@@ -73,7 +73,7 @@
                 <button
                 @click = "showRemoveModal(service)"
                 class="inline-flex items-center justify-center rounded-lg transition px-1 py-1 text-sm bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03] dark:hover:text-gray-300"
-              >                
+                >                
                 <TrashIcon />
               </button>
               </td>
@@ -462,10 +462,10 @@
       if (!res.ok) {throw new Error(`Error HTTP ${res.status}: ${res.statusText}`)}
 
       // Verifica que las respuestas sean válidas antes de procesarlas
-      const data = await res.json();       
+      const data = await res.json();
       return data
     } catch (err) {
-      console.error("Error al modificar el firewall:", err)      
+      console.error("Error al modificar el firewall:", err)
       return {success: false, error: err.message}
     }
     finally{

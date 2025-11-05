@@ -56,8 +56,10 @@ import CancelIcon from "./CancelIcon.vue";
 import OptionIcon from "./OptionIcon.vue";
 import Spinner from "./Spinner.vue";
 import Copy from "./Copy.vue";
+import StopIcon from './StopIcon.vue'
 
 export {
+  StopIcon,
   Copy,
   Spinner,
   OptionIcon,

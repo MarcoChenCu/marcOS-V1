@@ -1,11 +1,5 @@
 // backend/src/utils/commandWhitelist.js
 export const ALLOWED_COMMANDS = {
-  'ufw-disable': {
-    cmd: 'sudo',
-    args: ['ufw', 'disable'],
-    description: 'Desactiva el firewall UFW',
-    allowParams: false
-  },
   'restart': {
     cmd: 'sudo',
     args: ['shutdown', '-r', '+1', "'Reincio desde marcOS'"],

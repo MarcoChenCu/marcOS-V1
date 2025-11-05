@@ -13,36 +13,36 @@
 
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue"
-import AdminLayout from "@/components/layout/AdminLayout.vue"
-import PageBreadcrumb from "@/components/common/PageBreadcrumb.vue"
-import Processes from "@/components/ecommerce/Processes.vue"
+  import { ref, onMounted, onUnmounted } from "vue"
+  import AdminLayout from "@/components/layout/AdminLayout.vue"
+  import PageBreadcrumb from "@/components/common/PageBreadcrumb.vue"
+  import Processes from "@/components/ecommerce/Processes.vue"
 
-const currentPageTitle = ref("Procesos")
-const processes = ref({})
+  const currentPageTitle = ref("Procesos")
+  const processes = ref({})
 
-// Intervalo controlado para actualización periódica
-let intervalId = null
+  // Intervalo controlado para actualización periódica
+  let intervalId = null
 
-const apiURL = import.meta.env.VITE_API_URL
+  const apiURL = import.meta.env.VITE_API_URL
 
-async function loadMetrics() {
-  try {
-    const res = await fetch(`${apiURL}/api/process`, { cache: "no-store" })
-
-    // Si la respuesta no es correcta, lanzar error
-    if (!res.ok) throw new Error(`Error HTTP: ${res.status}`)
-
-    // Verifica que las respuestas sean válidas antes de procesarlas
-    const processData = res.ok ? await res.json() : {}
-
-    // Evita valores null o undefined    
-    processes.value = processData || {}
-  } catch (err) {
-    console.error("Error al obtener los procesos:", err)
-    processes.value = { processesData: [] } // evitar undefined en el template
+  async function loadMetrics() {
+    try {
+      const res = await fetch(`${apiURL}/api/process`, { cache: "no-store" })
+    
+      // Si la respuesta no es correcta, lanzar error
+      if (!res.ok) throw new Error(`Error HTTP: ${res.status}`)
+    
+      // Verifica que las respuestas sean válidas antes de procesarlas
+      const processData = res.ok ? await res.json() : {}
+    
+      // Evita valores null o undefined    
+      processes.value = processData || {}
+    } catch (err) {
+      console.error("Error al obtener los procesos:", err)
+      processes.value = { processesData: [] } // evitar undefined en el template
+    }
   }
-}
 
   onMounted(() => {
     loadMetrics()
