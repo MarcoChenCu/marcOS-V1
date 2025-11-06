@@ -8,18 +8,18 @@
       </p>
       <!--Fila botones-->
       <div class="flex items-center mt-4 mb-4 gap-4">
-          <Button @click="manageUpdates('update'); updatingRepos = true " variant="primary" size="md">
+          <Button @click="manageUpdates('update'); updatingRepos = true " :disabled="updatingSystem" variant="primary" size="md">
             <div v-if="updatingRepos"><!--Configurar spinner al guardar-->
               <SpinnerIcon width="15" height="15" />
             </div>
               Actualizar repositorios
           </Button>
-          <Button @click="manageUpdates('upgrade'); updatingSystem = true" variant="primary" size="md">
+          <Button @click="manageUpdates('upgrade'); updatingSystem = true" :disabled="updatingRepos" variant="primary" size="md">
             <div v-if="updatingSystem"><!--Configurar spinner al guardar-->
               <SpinnerIcon width="15" height="15" />
             </div>
               Actualizar sistema
-          </Button>          
+          </Button>                    
         </div><!--Fila botones-->
           <!--Contenido del registro-->
         <h3 class="mb-2 mt-6 font-semibold text-gray-800 text-theme-xl dark:text-white/90 sm:text-2xl">
@@ -72,16 +72,17 @@ const updatesRef = ref(null);
   }
   //Listar actualizaciones disponibles
   async function listAvailableUpdates() {
+    if(updateList.value) return;
     updateList.value = true;
     scrollToBottom(updatesRef);
-    const response = await execUpdate("update-list")
+    const response = await execUpdate("update-list")    
     updatesAvailable.value = response.output || 'No se encontraron actualizaciones disponibles.';
     // Agregar entrada al Command Panel
     CommandPanel.add({
       commands: [{
-        command: 'sudo apt list --upgradable',
+        command: 'sudo apt list --upgradeable',
         title: 'Listar actualizaciones disponibles.',
-        description: "Con privilegios se ejecuta el gestor de paquetes 'apt' con el parámetro 'list --upgradable' para listar las actualizaciones disponibles.",
+        description: "Con privilegios se ejecuta el gestor de paquetes 'apt' con el parámetro 'list --upgradeable' para listar las actualizaciones disponibles.",
         output: response.output || '',
       }],
       state: response.success ? 'success' : 'error',
@@ -91,9 +92,12 @@ const updatesRef = ref(null);
   }
   //Funcion para ejecutar update o upgrade
   async function manageUpdates(command){
+    if(updatingSystem.value || updatingRepos.value) return;
     const response = await execUpdate(command);
+    if(response.success)
+      await listAvailableUpdates();
     //notificacion
-    notificationStore.add(response.success ? 'success' : 'error', 'Actualización del sistema', response.message)
+    notificationStore.add(response.success ? 'success' : 'error', 'Actualización del sistema',response.message)
     //registro en command panel
 
     let titleCommand = command === 'update' ? 'Actualizar repositorios' : 'Actualizar sistema';
@@ -123,12 +127,13 @@ const updatesRef = ref(null);
         headers: { "Content-Type": "application/json" },
       })
       // Si la respuesta no es correcta, lanzar error
-      if (!res.ok) {throw new Error(`Error HTTP ${res.status}: ${res.statusText}`)}
+      //if (!res.ok) {throw new Error(`Error HTTP ${res.status}: ${res.statusText}`)}
         // Verifica que las respuestas sean válidas antes de procesarlas
         response = await res.json();
     } catch (err) {
-      response = {success: false, message:'Error', output: err.message}
+      response = {success: false, message:'Error actualizaciones del sistema.', output: response.output || err.message}
     }
+
     finally{
       return response
     }

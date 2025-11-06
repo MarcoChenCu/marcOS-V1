@@ -16,7 +16,7 @@ export const ALLOWED_COMMANDS = {
   //lista actualizaciones disponibles
   'list': {
     cmd: 'sudo',
-    args: ['apt','list', '--upgradable'],
+    args: ['apt','list', '--upgradeable'],
     description: 'Listar actualizaciones disponibles',
     allowParams: false
   }

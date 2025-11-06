@@ -24,6 +24,7 @@
         />
         <!--Contenido del registro-->
         <textarea
+          v-if="!loadingSyslog"
           v-model="syslog"
           ref="syslogRef"
           placeholder="[Sin registros]"
@@ -32,6 +33,7 @@
           spellcheck="false"
           class="mt-4 min-h-[100px] max-h-[400px] dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300  focus:outline-hidden focus:ring-0 disabled:border-gray-100 disabled:bg-gray-50 disabled:placeholder:text-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 dark:disabled:border-gray-800 dark:disabled:bg-white/[0.03] dark:disabled:placeholder:text-white/15"
         ></textarea>
+        <Spinner v-else />
         <button
           v-if="syslog.length>0"
           @click="downloadLog('syslogLog.txt', syslog)"
@@ -63,6 +65,7 @@
         />
         <!--Contenido del registro-->
         <textarea
+        v-if="!loadingDebuglog"
           v-model="debuglog"
           ref="debuglogRef"
           placeholder="[Sin registros]"        
@@ -71,6 +74,7 @@
           spellcheck="false"
           class="mt-4 min-h-[100px] max-h-[400px] dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300  focus:outline-hidden focus:ring-0 disabled:border-gray-100 disabled:bg-gray-50 disabled:placeholder:text-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 dark:disabled:border-gray-800 dark:disabled:bg-white/[0.03] dark:disabled:placeholder:text-white/15"
         ></textarea>
+        <Spinner v-else />
         <button
           v-if="debuglog.length>0"
           @click="downloadLog('debugLog.txt', debuglog)"
@@ -102,7 +106,8 @@
           text="cat /var/log/daemon.log"
         />
         <!--Contenido del registro-->
-        <textarea     
+        <textarea
+          v-if="!loadingDaemonlog"   
           v-model="daemonlog"
           ref="daemonlogRef"
           placeholder="[Sin registros]"
@@ -112,6 +117,7 @@
           spellcheck="false"
           class="mt-4 min-h-[100px] max-h-[400px] dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300  focus:outline-hidden focus:ring-0 disabled:border-gray-100 disabled:bg-gray-50 disabled:placeholder:text-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 dark:disabled:border-gray-800 dark:disabled:bg-white/[0.03] dark:disabled:placeholder:text-white/15"
         ></textarea>
+        <Spinner v-else />
         <button
           v-if="daemonlog.length>0"
           @click="downloadLog('daemonLog.txt', daemonlog)"
@@ -142,7 +148,8 @@
           text="cat /var/log/auth.log"
         />
         <!--Contenido del registro-->
-        <textarea     
+        <textarea
+          v-if="!loadingAuthlog"
           v-model="authlog"   
           ref="authlogRef"
           placeholder="[Sin registros]"
@@ -152,6 +159,7 @@
           spellcheck="false"
           class="mt-4 min-h-[100px] max-h-[400px] dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300  focus:outline-hidden focus:ring-0 disabled:border-gray-100 disabled:bg-gray-50 disabled:placeholder:text-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 dark:disabled:border-gray-800 dark:disabled:bg-white/[0.03] dark:disabled:placeholder:text-white/15"
         ></textarea>
+        <Spinner v-else />
         <button
           v-if="authlog.length>0"
           @click="downloadLog('authLog.txt', authlog)"
@@ -193,6 +201,7 @@
   import CopytoClipboard from "@/components/common/CopytoClipboard.vue";
   import { notificationStore } from "@/stores/notificationStore";
   import { useCommandPanel } from "@/stores/commandPanel";
+  import Spinner from "@/components/common/Spinner.vue";
   
   const currentPageTitle = ref("Registros");
   const apiURL = import.meta.env.VITE_API_URL
@@ -211,15 +220,29 @@
   const daemonlog = ref('')
   const authlog = ref('')
 
+  //Spinner logs
+  const loadingSyslog = ref(false)
+  const loadingDebuglog = ref(false)
+  const loadingDaemonlog = ref(false)
+  const loadingAuthlog = ref(false)
+
   async function fetchLogs() {
+    loadingSyslog.value = true
     syslog.value = await loadLogs('syslog')
     await scrollToBottom(syslogRef)
+    loadingSyslog.value = false
+    loadingDebuglog.value = true
     debuglog.value = await loadLogs('debug')
     await scrollToBottom(debuglogRef)
+    loadingDebuglog.value = false
+    loadingDaemonlog.value = true
     daemonlog.value = await loadLogs('daemon.log')
+    loadingDaemonlog.value = false
     await scrollToBottom(daemonlogRef)
+    loadingAuthlog.value = true    
     authlog.value = await loadLogs('auth.log')
     await scrollToBottom(authlogRef)
+    loadingAuthlog.value = false
   }
   //Función para cargar los logs
   async function loadLogs(fileName) {

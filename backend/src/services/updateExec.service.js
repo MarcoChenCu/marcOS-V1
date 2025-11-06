@@ -16,7 +16,7 @@ export async function runCommandSafe(commandKey, extraArgs = []) {
 
   // Sanitizar parámetros: solo letras, números, guiones y puntos (evitar inyección)
   const sanitizedArgs = extraArgs.filter(arg => /^[a-zA-Z0-9\-_.]+$/.test(arg))
-
+  
   // Combinar todos los argumentos
   const args = [command.cmd, ...command.args, ...sanitizedArgs]
 

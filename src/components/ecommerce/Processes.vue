@@ -6,7 +6,7 @@
       <div>
         <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Procesos</h3>
       </div>
-      <SearchBar @search="searchQuery = $event" />
+      <SearchBar v-if="limit==='all'" @search="searchQuery = $event" />
       <!--Redirigir a /processes-->
       <div class="flex items-center gap-3">
         <router-link   

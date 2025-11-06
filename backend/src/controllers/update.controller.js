@@ -15,16 +15,15 @@ export const updateRepo = async (req, res) => {
     const output = await runCommandSafe('update')
     res.json({ success: true, message: 'Lista de repositorios actualizada.', output: output })
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Error', output: error.message })
+    res.status(500).json({ success: false, message: 'Error al intentar actualizar la lista de repositorios.', output: error.message })
   }
 }
-
 
 export const upgradeSystem = async (req, res) => {
   try {
     const output = await runCommandSafe('upgrade')
     res.json({ success: true, message: 'Sistema actualizado exitosamente.', output: output })
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Error', output: error.message })
+    res.status(500).json({ success: false, message: 'Error al intentar instalar las actualizaciones.', output: error.message })
   }
 }
