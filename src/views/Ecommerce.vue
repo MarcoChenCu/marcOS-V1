@@ -6,7 +6,7 @@
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
           <SystemMetrics
             title="Procesador"
-            :description="metrics.cpu?.model+' ('+metrics.cpu?.cores+' cores) '+metrics.cpu?.speed+'GHz'"
+            :description="metrics.cpu?.model+' ('+metrics.cpu?.cores+' cores) '"
             :value="metrics.cpu?.usage"
             unit="%"
             >

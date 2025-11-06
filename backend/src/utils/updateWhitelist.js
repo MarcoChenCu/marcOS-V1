@@ -2,13 +2,13 @@
 export const ALLOWED_COMMANDS = {
   'update': {
     cmd: 'sudo',
-    args: ['apt', 'update'],
+    args: ['apt-get', 'update'],
     description: 'Actualizar repositorios del sistema',
     allowParams: false
   },
   'upgrade': {
     cmd: 'sudo',
-    args: ['apt', 'upgrade', '-y'],
+    args: ['apt-get', 'upgrade', '-y'],
     description: 'Actualizar el sistema',
     allowParams: false
   },
@@ -16,7 +16,7 @@ export const ALLOWED_COMMANDS = {
   //lista actualizaciones disponibles
   'list': {
     cmd: 'sudo',
-    args: ['apt','list', '--upgradeable'],
+    args: ['apt-get','list', '--upgradeable'],
     description: 'Listar actualizaciones disponibles',
     allowParams: false
   }
