@@ -12,14 +12,19 @@
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-6 mt-6">
         <!--Tarjetas informacion de aplicaciones-->
         <AppInfoCard
-        v-for="app in AppList"         
-        :AppName="app.name"
+        v-for="app in AppList"    
+        :key="app.appName"     
+        :Name="app.name"
         :description="app.description"
         :version="app.version"
         :image="app.image"
+        :installing="installingApp === app.appName"
+        @install="installApp(app.appName)"
         />
       </div><!--Fin contenedor Apps-->
     </div><!--Fin contenedor principal-->
+    
+
   </AdminLayout>
 </template>
 
@@ -28,21 +33,55 @@
   import AdminLayout from "@/components/layout/AdminLayout.vue";
   import PageBreadcrumb from "@/components/common/PageBreadcrumb.vue";
   import AppInfoCard from "@/components/Apps/AppInfoCard.vue";
+  import { notificationStore } from "@/stores/notificationStore";
+  import { useCommandPanel } from "@/stores/commandPanel";
 
   const currentPageTitle = ref("Aplicaciones");
+  const CommandPanel = useCommandPanel();
+  const apiURL = import.meta.env.VITE_API_URL
+  //Indicador de instalacion
+  const installingApp = ref(null);
+
+  async function installApp(appName) {
+    installingApp.value = appName;
+    let data = {success: false, message: 'Error inesperado al instalar la aplicación', output: 'ERROR'};
+    try {
+      const response = await fetch(`${apiURL}/api/apps/install`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ appName }),
+      });
+      data = await response.json();
+    } catch (error) {
+      data = {success: false, message: 'Error de red al instalar la aplicación', output: error.message};
+    } finally {
+      notificationStore.add(data.success ? 'success' : 'error', 'Instalación de aplicación',data.message)
+      CommandPanel.add({
+        commands: [{
+          command: 'sudo apt install '+appName,
+          title: 'Instalar aplicación ',
+          description: 'Con privilegios se ejecuta el gestor de paquetes \'apt\' con el parámetro \'install\' para instalar la aplicación '+appName+'.',
+          output: data.output,
+        }],
+        state: data.success ? 'success' : 'error',
+        description: 'Instalar '+appName,
+      })
+      installingApp.value = null;
+    }
+  }
 
   const AppList = [
-    {name: "MySQL", description: "Sistema de gestión de bases de datos relacionales de código abierto.", version: '8.4', image: '/images/apps/mysql-icon.png'},
-    {name: "PostgreSQL", description: "Sistema de gestión de bases de datos relacional orientado a objetos y de código abierto.", version: '18.0', image: '/images/apps/postgres.png'},
-    {name: "MariaDB", description: "MariaDB Server es una base de datos relacional de código abierto de alto rendimiento.", version: '18.0', image: '/images/apps/mariadb.png'},
-    {name: "MongoDB", description: "Sistema de gestión de bases de datos no relacional de código abierto.", version: 'Latest', image: '/images/apps/mongodb.png'},
-    {name: "phpMyAdmin", description: "Interfaz web para MySQL y MariaDB.", version: 'Latest', image: '/images/apps/phpmyadmin-icon.png'},
-    {name: "Apache HTTP Server", description: "Servidor web HTTP de código abierto.", version: '2.4.65', image: '/images/apps/httpd.png'},
-    {name: "Nginx", description: "Servidor web/Proxy inverso ligero de alto rendimiento.", version: 'Latest', image: '/images/apps/nginx.png'},
-    {name: "Neofetch", description: "Programa de línea de comandos que muestra información del sistema.", version: 'Latest', image: '/images/apps/neofetch.png'},
-    {name: "Node.js", description: "Entorno en tiempo de ejecución multiplataforma, de código abierto.", version: '22.20.0 LTS', image: '/images/apps/Node.js.png'},
-    {name: "Timeshift", description: "Cree instantáneas de los archivos Linux que restauran un estado anterior del sistema.", version: 'Latest', image: '/images/apps/timeshift.png'},
-  ]
+    { appName: "mysql-server", name: "MySQL", description: "Sistema de gestión de bases de datos relacionales de código abierto.", version: "8.4", image: "/images/apps/mysql-icon.png" },
+    { appName: "postgresql", name: "PostgreSQL", description: "Sistema de gestión de bases de datos relacional orientado a objetos y de código abierto.", version: "18.0", image: "/images/apps/postgres.png" },
+    { appName: "mariadb-server", name: "MariaDB", description: "MariaDB Server es una base de datos relacional de código abierto de alto rendimiento.", version: "18.0", image: "/images/apps/mariadb.png" },
+    { appName: "mongodb", name: "MongoDB", description: "Sistema de gestión de bases de datos no relacional de código abierto.", version: "Latest", image: "/images/apps/mongodb.png" },
+    { appName: "phpmyadmin", name: "phpMyAdmin", description: "Interfaz web para MySQL y MariaDB.", version: "Latest", image: "/images/apps/phpmyadmin-icon.png" },
+    { appName: "apache2", name: "Apache HTTP Server", description: "Servidor web HTTP de código abierto.", version: "2.4.65", image: "/images/apps/httpd.png" },
+    { appName: "nginx", name: "Nginx", description: "Servidor web/Proxy inverso ligero de alto rendimiento.", version: "Latest", image: "/images/apps/nginx.png" },
+    { appName: "neofetch", name: "Neofetch", description: "Programa de línea de comandos que muestra información del sistema.", version: "Latest", image: "/images/apps/neofetch.png" },
+    { appName: "nodejs", name: "Node.js", description: "Entorno en tiempo de ejecución multiplataforma, de código abierto.", version: "22.20.0 LTS", image: "/images/apps/Node.js.png" },
+    { appName: "timeshift", name: "Timeshift", description: "Cree instantáneas de los archivos Linux que restauran un estado anterior del sistema.", version: "Latest", image: "/images/apps/timeshift.png" }
+  ];
 
 </script>
 
