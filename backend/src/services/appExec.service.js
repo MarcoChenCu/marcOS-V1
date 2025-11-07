@@ -4,8 +4,7 @@ import { ALLOWED_COMMANDS } from '../utils/appWhitelist.js'
 
 export async function runCommandSafe(commandKey, extraArgs = []) {
   const command = ALLOWED_COMMANDS[commandKey]
-  if (!command) {
-    console.log(commandKey)
+  if (!command) {    
     throw new Error('Comando no permitido')
   }
 

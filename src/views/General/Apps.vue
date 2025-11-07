@@ -48,24 +48,38 @@
   async function installApp(appName) {
     installingApp.value = appName;
     let data = {success: false, message: 'Error inesperado al instalar la aplicación', output: 'ERROR'};
+    let updateData = {success: false, message: 'Error al intentar actualizar la listas de paquetes', output: 'ERROR'};
     try {
+      const update = await fetch(`${apiURL}/api/updates/update`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+      });
       const response = await fetch(`${apiURL}/api/apps/install`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ appName }),
       });
+      updateData = await update.json();
       data = await response.json();
     } catch (error) {
       data = {success: false, message: 'Error de red al instalar la aplicación', output: error.message};
     } finally {
       notificationStore.add(data.success ? 'success' : 'error', 'Instalación de aplicación',data.message)
       CommandPanel.add({
-        commands: [{
+        commands: [
+          {
+          command: 'sudo apt update',
+          title: 'Actualizar lista de paquetes',
+          description: 'Con privilegios se ejecuta el gestor de paquetes \'apt\' con el parámetro \'update\' para actualizar la lista de paquetes disponibles. Recomendado antes de instalar software.',
+          output: updateData.output,
+          },
+          {
           command: 'sudo apt install '+appName,
           title: 'Instalar aplicación ',
           description: 'Con privilegios se ejecuta el gestor de paquetes \'apt\' con el parámetro \'install\' para instalar la aplicación '+appName+'.',
           output: data.output,
-        }],
+          },
+      ],
         state: data.success ? 'success' : 'error',
         description: 'Instalar '+appName,
       })
@@ -109,12 +123,12 @@
   }
 
   //Verificar instalación de una app (devuelve true/false)
-  async function appIsInstalled(appName) {
+  async function appIsInstalled(appName,key) {
     try {
       const response = await fetch(`${apiURL}/api/apps/installed`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ appName }),
+        body: JSON.stringify({ appName,key }),
       });
       const data = await response.json();
       return data.success;
@@ -127,23 +141,23 @@
   async function checkAllInstalled() {
     for (const app of AppList.value) {
       loadingApps.value[app.appName] = true; 
-      const installed = await appIsInstalled(app.appName);
+      const installed = await appIsInstalled(app.appName,app.key);
       installedApps.value[app.appName] = installed;
       loadingApps.value[app.appName] = false;
     }
   }
 
   const AppList = ref([
-    { method: 'which',appName: "mysql-server", name: "MySQL", description: "Sistema de gestión de bases de datos relacionales de código abierto.", version: "8.4", image: "/images/apps/mysql-icon.png" },
-    { method: 'which',appName: "postgresql", name: "PostgreSQL", description: "Sistema de gestión de bases de datos relacional orientado a objetos y de código abierto.", version: "18.0", image: "/images/apps/postgres.png" },
-    { method: 'which',appName: "mariadb-server", name: "MariaDB", description: "MariaDB Server es una base de datos relacional de código abierto de alto rendimiento.", version: "18.0", image: "/images/apps/mariadb.png" },
+    { key: 2,appName: "mysql-server", name: "MySQL", description: "Sistema de gestión de bases de datos relacionales de código abierto.", version: "8.4", image: "/images/apps/mysql-icon.png" },
+    { key: 2,appName: "postgresql", name: "PostgreSQL", description: "Sistema de gestión de bases de datos relacional orientado a objetos y de código abierto.", version: "18.0", image: "/images/apps/postgres.png" },
+    { key: 2,appName: "mariadb-server", name: "MariaDB", description: "MariaDB Server es una base de datos relacional de código abierto de alto rendimiento.", version: "18.0", image: "/images/apps/mariadb.png" },
     //method: 'which',{ appName: "mongodb", name: "MongoDB", description: "Sistema de gestión de bases de datos no relacional de código abierto.", version: "Latest", image: "/images/apps/mongodb.png" },
     //{ method: 'which',appName: "phpmyadmin", name: "phpMyAdmin", description: "Interfaz web para MySQL y MariaDB.", version: "Latest", image: "/images/apps/phpmyadmin-icon.png" },
-    { method: 'which',appName: "apache2", name: "Apache HTTP Server", description: "Servidor web HTTP de código abierto.", version: "2.4.65", image: "/images/apps/httpd.png" },
-    { method: 'which',appName: "nginx", name: "Nginx", description: "Servidor web/Proxy inverso ligero de alto rendimiento.", version: "Latest", image: "/images/apps/nginx.png" },
-    { method: 'which',appName: "neofetch", name: "Neofetch", description: "Programa de línea de comandos que muestra información del sistema.", version: "Latest", image: "/images/apps/neofetch.png" },
-    { method: 'which',appName: "nodejs", name: "Node.js", description: "Entorno en tiempo de ejecución multiplataforma, de código abierto.", version: "22.20.0 LTS", image: "/images/apps/Node.js.png" },
-    { method: 'which',appName: "timeshift", name: "Timeshift", description: "Cree instantáneas de los archivos Linux que restauran un estado anterior del sistema.", version: "Latest", image: "/images/apps/timeshift.png" }
+    { key: 0,appName: "apache2", name: "Apache HTTP Server", description: "Servidor web HTTP de código abierto.", version: "2.4.65", image: "/images/apps/httpd.png" },
+    { key: 0,appName: "nginx", name: "Nginx", description: "Servidor web/Proxy inverso ligero de alto rendimiento.", version: "Latest", image: "/images/apps/nginx.png" },
+    { key: 0,appName: "neofetch", name: "Neofetch", description: "Programa de línea de comandos que muestra información del sistema.", version: "Latest", image: "/images/apps/neofetch.png" },
+    { key: 0,appName: "node", name: "Node.js", description: "Entorno en tiempo de ejecución multiplataforma, de código abierto.", version: "22.21.0 LTS", image: "/images/apps/Node.js.png" },
+    { key: 0,appName: "timeshift", name: "Timeshift", description: "Cree instantáneas de los archivos Linux que restauran un estado anterior del sistema.", version: "Latest", image: "/images/apps/timeshift.png" }
   ]);
 
   //Ejecutar al montar
