@@ -25,7 +25,7 @@
       </div>
       <!--Tabla usuarios-->
       <div class="max-w-full overflow-x-auto custom-scrollbar">
-        <table class="min-w-full">
+        <table v-if="!loading" class="min-w-full">
           <thead>
             <tr class="border-t border-gray-100 dark:border-gray-800">
               <th class="py-3 text-left">
@@ -44,28 +44,32 @@
           </thead>
           <tbody>
             <tr
-              v-for="(user, index) in Users"
-              :key="user.pid"
+              v-for="(user, index) in usersList"
+              :key="user.uid"
               class="border-t border-gray-100 dark:border-gray-800">
               <td class="py-3 whitespace-nowrap">
                 <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ user.uid }}</p>
               </td>
               <td class="py-3 whitespace-nowrap">
-                <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ user.user }}</p>
+                <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ user.username }}</p>
               </td>
               <td class="py-3 whitespace-nowrap">
                 <p class="text-gray-500 text-theme-sm dark:text-gray-400">{{ user.name }}</p>
               </td>              
               <td class="py-3 text-left">
-                <button                        
-                class="inline-flex items-center justify-center rounded-lg transition px-1 py-1 text-sm bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03] dark:hover:text-gray-300"
-              >
-                <OptionIcon />
-              </button>
+                <button
+                  @click = "showRemoveModal(service)"
+                  class="inline-flex items-center justify-center rounded-lg transition px-1 py-1 text-sm bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03] dark:hover:text-gray-300"
+                  >                
+                  <TrashIcon />
+                </button>
               </td>
             </tr>
           </tbody>      
         </table>
+        <div v-else class="flex flex-row justify-center min-h-[150px]">            
+          <SpinnerComponent/>
+        </div>
       </div><!--Fin tabla-->
       <div class="mx-auto w-full max-w-[630px] text-center mt-4 mb-4">
         <CopytoClipboard
@@ -90,20 +94,57 @@
     >
       <!--Contenido del modal-->
       <template #content>        
-        <div>
+        <div class="mb-2"><!--Usuario-->
           <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
             Nombre de usuario
           </label>
           <input
+            v-model="username"
             type="text"
-            placeholder="Nombre de usuario. En minúsculas, sin espacios o carácteres especiales."  
+            placeholder="Ejemplos: pedro1, pedro, p3dro."  
             class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
           />          
           <label class="mb-1.5 block text-sm font-medium text-gray-400 dark:text-gray-600">
-            *El usuario debe ser único.
+            *El usuario debe ser único, en minúsculas, sin espacios o carácteres especiales.
           </label>
-        </div>
-        <div class="mt-4">
+        </div><!--fin usuario-->
+        <div class="mb-2"><!--Nombre completo-->
+          <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+            Nombre
+          </label>
+          <input
+            v-model="name"
+            type="text"
+            placeholder="Nombre de usuario. Ejemplo: Pedro Ruiz."  
+            class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+          />                    
+        </div><!--fin nombre completo-->
+        <div class="mb-2"><!--Contraseña-->
+          <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+            Contraseña
+          </label>
+          <input
+            v-model="password"
+            type="password"
+            placeholder="Contraseña del usuario."  
+            class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+          />
+        </div><!--fin contraseña-->
+        <div class="mb-2"><!--Contraseña-->
+          <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+            Confirmar contraseña
+          </label>
+          <input
+            v-model="confirmPassword"
+            type="password"
+            placeholder="Confirmar contraseña."  
+            class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+          />
+        </div><!--fin contraseña-->
+        <label class="mb-1.5 block text-sm font-medium text-red-400 dark:text-red-600">            
+          {{ errorCreateUser }}
+        </label>
+        <div class="mt-6">
           <CopytoClipboard
             text='sudo adduser'
             title="Agregar el usuario por la terminal"
@@ -116,29 +157,92 @@
 </template>
 
 <script setup>
-  import { ref } from "vue";
+  import { ref, onMounted } from "vue";
   import AdminLayout from "@/components/layout/AdminLayout.vue";
   import PageBreadcrumb from "@/components/common/PageBreadcrumb.vue";
   import StanndarModal from "@/components/common/StandarModal.vue";
   import CopytoClipboard from "@/components/common/CopytoClipboard.vue";
-  import OptionIcon from "@/icons/OptionIcon.vue";
+  import SpinnerComponent from "@/components/common/Spinner.vue";
+  import { notificationStore } from "@/stores/notificationStore";
+  import { useCommandPanel } from "@/stores/commandPanel";
+  import { TrashIcon } from "@/icons";
+  
+  const usersList = ref({})
 
-  const Users = [
-    {
-      uid: "1",
-      user: "marco",
-      name: "Alfredo Chen"      
-    }
-  ]
   const currentPageTitle = ref("Usuarios");
+  const commandPanel = useCommandPanel();
+  const apiURL = import.meta.env.VITE_API_URL;
   
   //Mostrar modales
   const showUserModal = ref(false)
   const showGroupModal = ref(false)
 
+  //valores modal crear usuario
+  const username = ref("")
+  const name = ref("")
+  const password = ref("")
+  const confirmPassword = ref("")
+  const errorCreateUser = ref("")
+
+  //
+  const loading = ref(false)
+
   //Guardar usuario
-  const saveUser = () => {
-    console.log("Usuario guardado")
+  async function saveUser() {
+    //Verificar que el usuario no sea vacío o este en mayúsculas
+    if(username.value.trim() === "" || /[A-Z]/.test(username.value)){
+      errorCreateUser.value = "El nombre de usuario no puede estar vacío o contener mayúsculas."
+      return
+    }
+    //Verificar que las contraseñas coincidan y no sean vacías
+    if(password.value !== confirmPassword.value || password.value.trim() === ""){
+      errorCreateUser.value = "Las contraseñas no coinciden o están vacías."
+      return
+    }
+
+    //Realizar petición para crear usuario
+    let data = {success: false, message: 'Error inesperado al crear el usuario', output: 'ERROR'};    
+    try {
+      const response = await fetch(`${apiURL}/api/users/create`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username: username.value, name: name.value, password: password.value}),
+      });
+      data = await response.json();
+      if(data.success){
+        //Actualizar lista de usuarios
+        getUsers();
+      }
+    } catch (error) { //Error al crear usuario: TypeError: res.json is not a function
+    //at createUser (file:///home/marco/Documents/PG2/marcOS-V1/backend/src/controllers/user.controller.js:53:9)
+    //at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+      data = {success: false, message: 'Error al crear el usuario.', output: error.message};
+    } finally {
+      notificationStore.add(data.success ? 'success' : 'error', 'Creando usuario',data.message)
+      /** 
+       * 
+       commandPanel.add({
+        commands: [
+          {
+            command: 'sudo adduser',
+            title: 'Actualizar lista de paquetes',
+          description: 'Con privilegios se ejecuta el gestor de paquetes \'apt\' con el parámetro \'update\' para actualizar la lista de paquetes disponibles. Recomendado antes de instalar software.',
+          output: updateData.output,
+          },
+          {
+            command: 'sudo apt install '+appName,
+          title: 'Instalar aplicación ',
+          description: 'Con privilegios se ejecuta el gestor de paquetes \'apt\' con el parámetro \'install\' para instalar la aplicación '+appName+'.',
+          output: data.output,
+          },
+        ],
+        state: data.success ? 'success' : 'error',
+        description: 'Instalar '+appName,
+      })
+      */
+    }
+    //Restablecer mensaje de error
+    errorCreateUser.value = ""
     showUserModal.value = false
   }
   //Guardar grupo
@@ -146,6 +250,31 @@
     console.log("Grupo guardado")
     showGroupModal.value = false
   }
+
+  //Realizar peticion para obtener usuarios
+   async function getUsers() {
+    try {
+      loading.value = true
+      const res = await fetch(`${apiURL}/api/users/list`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },        
+      })      
+      // Si la respuesta no es correcta, lanzar error
+      if (!res.ok) {throw new Error(`Error HTTP ${res.status}: ${res.statusText}`)}
+
+      // Verifica que las respuestas sean válidas antes de procesarlas
+      const data = await res.json();
+      usersList.value = data.users;      
+    } catch (err) {      
+      console.error("Error fetching users:", err);
+    }
+    finally{
+      loading.value = false
+    }
+  }
+  onMounted(() => {
+    getUsers();
+  })
 
 </script>
 

@@ -8,6 +8,7 @@ import processRoutes from "./src/routes/process.routes.js"
 import execRoutes from "./src/routes/exec.routes.js";
 import updateRoutes from "./src/routes/update.routes.js";
 import appRoutes from "./src/routes/app.routes.js";
+import userRoutes from "./src/routes/user.routes.js";
 const app = express()
 
 // CORS (ajusta origen si lo deseas)
@@ -22,6 +23,7 @@ app.use("/api", processRoutes)
 app.use("/api", execRoutes);
 app.use("/api", updateRoutes);
 app.use("/api", appRoutes);
+app.use("/api", userRoutes);
 
 // Middleware para 404
 app.use((req, res) => {

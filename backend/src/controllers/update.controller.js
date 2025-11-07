@@ -1,4 +1,3 @@
-import si from "systeminformation"
 import { runCommandSafe } from '../services/updateExec.service.js'
 
 export const getUpdates = async (req, res) => {

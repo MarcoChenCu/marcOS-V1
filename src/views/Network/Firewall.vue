@@ -81,8 +81,8 @@
           </tbody>      
         </table>
         <div v-else class="flex flex-row justify-center min-h-[150px]">            
-        <SpinnerComponent/>
-      </div>
+          <SpinnerComponent/>
+        </div>
       </div><!--Fin tabla-->
       <div class="mx-auto w-full max-w-[630px] text-center mt-4 mb-4">
         <CopytoClipboard
