@@ -107,6 +107,7 @@
     <OkCancelModal
       :visible="showModal"
       title="Desactivar el Firewall"
+      :buttonText="'Desactivar'"
       description="Esto tiene implicaciones en la seguridad del sistema."
       @close="cancelToggle"
       @save="disableFirewall()"
@@ -115,7 +116,8 @@
     <OkCancelModal
       :visible="showRemoveRuleModal"
       title="Eliminar la regla del Firewall"
-      :description='"Esto evitará que la aplicación "+serviceInfo+" reciba tráfico."'      
+      :description='"Esto evitará que la aplicación "+serviceInfo.name+" reciba tráfico."'
+      :buttonText="'Eliminar'"
       @close="showRemoveRuleModal=false"
       @save="removeService"
     />
@@ -191,9 +193,9 @@
   const showRemoveModal = (service) => {
     // Asegurarse de trabajar con string y eliminar el sufijo " (v6)" si existe
     let cleaned = service
-    if (typeof service === 'string') {
+    if (typeof service.name === 'string') {
       // Elimina espacios opcionales y la parte "(v6)" al final (case-insensitive)
-      cleaned = service.replace(/\s*\(v6\)\s*$/i, '')
+      cleaned.name = service.name.replace(/\s*\(v6\)\s*$/i, '')
     }
     serviceInfo.value = cleaned
     showRemoveRuleModal.value = true

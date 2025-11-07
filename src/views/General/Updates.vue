@@ -4,7 +4,8 @@
     <!--Contenedor principal-->
     <div class="rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">            
       <p class="text-sm text-gray-500 dark:text-gray-400 sm:text-base">
-        Aquí puede gestionar las actualizaciones del sistema. Mantenga su sistema al día para contar con las últimas características y mejoras de seguridad.
+        Aquí puede gestionar las actualizaciones del sistema. Mantenga su sistema al día para contar con las últimas características y mejoras de seguridad.<br></br>
+        Actualice primero los repositorios para obtener la lista más reciente de paquetes disponibles y luego actualice el sistema para instalar las últimas versiones de los paquetes instalados.
       </p>
       <!--Fila botones-->
       <div class="flex items-center mt-4 mb-4 gap-4">
@@ -141,7 +142,7 @@ const updatesRef = ref(null);
 
 
   onMounted(() => {
-    listAvailableUpdates();
+    //listAvailableUpdates();
   });
 
 

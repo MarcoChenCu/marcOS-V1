@@ -38,9 +38,9 @@
           <button
             @click="emit('save')"
             type="button"
-            class="flex justify-center rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600"
+            class="flex justify-center rounded-lg bg-yellow-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-yellow-600"
             >
-            Guardar
+            {{ buttonText }}
           </button>
           <button
             @click="emit('close')"
@@ -70,6 +70,10 @@ const props = defineProps({
   description: {
     type: String,
     default: "¿Estás seguro de continuar con esta acción?"
+  },
+  buttonText: {
+    type: String,
+    default: "Aceptar"
   }
 })
 
