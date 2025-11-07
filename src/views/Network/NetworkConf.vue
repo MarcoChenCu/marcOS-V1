@@ -117,7 +117,7 @@
             <div v-if="saving"><!--Configurar spinner al guardar-->
               <SpinnerMini width="15" height="15" />
             </div>
-              Guardar
+              {{ saving ? 'Guardando...' : 'Guardar' }}
           </Button>
           <!--Button variant="error" size="md">Cancelar</Button-->
         </div>
@@ -197,7 +197,7 @@
                   class="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"                  
                 >
                 <option value="0" disabled>Seleccionar interfaz</option>
-                <option 
+                <option                
                   v-for="(interfaceInfo, index) in network"
                   :key="interfaceInfo.ifaceName"
                   :value="index" class="text-gray-700 dark:bg-gray-900 dark:text-gray-400">
@@ -281,7 +281,7 @@
               </label>        
             </div>   
           </div><!--Fin parametros interfaz-->
-          <p v-if="errorModal" class="mt-1.5 text-theme-xs text-error-500">Seleccione una interfaz</p>
+          <p class="mt-1.5 text-theme-xs text-error-500">{{ errorModal }}</p>
         </div><!--Fin columna-->
       </template>
     </StandarModal>
@@ -308,17 +308,17 @@
   //Modal configurar interfaz
   const toggle = ref(false)
   const showInterfaceModal = ref(false)
-  const errorModal = ref(false)
+  const errorModal = ref('')
   const indexInterface = ref(0)
   const loading = ref(false)
   const saving = ref(false)
 
   const saveInterface = ()=>{
     if(indexInterface.value===0){
-      errorModal.value = true
+      errorModal.value = 'Seleccione una interfaz'
       return
     }
-    errorModal.value = false
+    errorModal.value = ''
     showInterfaceModal.value = false
     sendStatus(false,"Configurar interfaz "+network.value[indexInterface.value].ifaceName,"OK","OK2")   
   }
@@ -327,25 +327,29 @@
   async function saveNetplan() {      
     saving.value = true
     //Revisar sintaxis archivo yaml
-    const check = checkYaml(netplanInfo.value)
-    console.log(check.status)
+    //const check = checkYaml(netplanInfo.value)
+    //console.log(check.status)
     
-    if(!check.status){
-      notificationStore.add(check.status,check.status ? 'Éxito' : "Error", check.message)
-      saving.value = false
-      return 
-    }
+    //if(!check.status){
+    //  notificationStore.add(check.status,check.status ? 'Éxito' : "Error", check.message)
+    //  saving.value = false
+    //  return 
+    //}
 
+    let output = ''
+    let state = false
     try {
-    const res = await fetch(`${apiURL}/api/exec/netplan/save`, {
+      if (!netplanInfo.value) {
+        output = 'El contenido del archivo no puede estar vacío.'
+        throw new Error('El contenido del archivo no puede estar vacío.')
+      }
+      const response = await fetch(`${apiURL}/api/exec/netplan/save`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ content: netplanInfo.value })
     })
   
-    const data = await res.json()
-    let output = ''
-    let state = false
+    const data = await response.json()
     if (data.success) {
       output = data.output 
       state = true
@@ -354,23 +358,25 @@
       output = data.error || 'Error desconocido al guardar el archivo.'
       state = false
     }    
+    
+    //Aplicar los cambios en la red
+    if(data.success)
+      await applyNetplanChanges()
+  } catch (err) {
+    console.error("Error al guardar Netplan:", err)
+  }finally{  
+    saving.value = false
     //Enviar notificacion de estado
     notificationStore.add(state ? 'success' : 'error',state ? 'Éxito' : 'Error', state ? 'Los cambios en el archivo de red se guardaron correctamente.' : "Error al guardar los cambios en el archivo de red.")
     //Agregar comando
-    CommandPanel.add({      
+    CommandPanel.add({
       commands: [
         { command: "sudo nano /etc/netplan/50-netplan.yaml", title: "Editar archivo de red netplan", description: "Utilizando el programa 'nano' se edita el archivo de red. El comando 'sudo' es necesario ya que se requieren privilegios para realizar esta tarea.", output: output },       
       ],
       state: state ? "success" : "error",
       description: 'Editar la configuración de red.',      
     });
-    //Aplicar los cambios en la red
-    if(data.success)
-      await applyNetplanChanges()
-    saving.value = false
-    } catch (err) {
-      console.error("Error al guardar Netplan:", err)
-    }
+  }
   }
 
   async function applyNetplanChanges() {
@@ -404,7 +410,6 @@
     }
   }
 
-
   const sendStatus=(state,desc,output1,output2)=>{
     CommandPanel.add({
       commands: [
@@ -412,7 +417,7 @@
         { command: "sudo netplan apply", title: "Aplicar cambios", description: "Se aplican los cambios realizados al archivo de red al sistema.", output: output2 || '' },
       ],
       state: state ? "success" : "error",
-      description: desc,      
+      description: desc,
     });
     notificationStore.add(state ? 'success' : 'error',state ? 'Éxito' : 'Error', state ? 'Los cambios en el archivo de red se guardaron correctamente.' : "Error al guardar los cambios en el archivo de red.")
   }
@@ -443,7 +448,7 @@
       ])
 
       // Asignar valores de forma segura
-      network.value = systemData?.network?.networkInfo || {}
+      network.value = systemData?.network?.networkInfo || {}      
       netplanInfo.value = netplanData?.output || "" // asegurarte de usar el campo correcto
     } catch (err) {
       console.error("Error al obtener métricas del sistema o netplan:", err)
@@ -454,7 +459,7 @@
     loading.value = false
   }
 
-  function checkYaml(content){    
+  function checkYaml(content){   
     if (!content)
       return {status: false, message: 'El contenido del archivo no puede estar vacío'}
 
