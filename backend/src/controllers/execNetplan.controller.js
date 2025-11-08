@@ -45,3 +45,31 @@ export async function applyNetplanFile(req, res) {
   }
 }
 
+import yaml from 'js-yaml' // npm install js-yaml
+
+function buildNetplanConfig(interfaces) {
+  const config = {
+    network: {
+      version: 2,
+      ethernets: {}
+    }
+  }
+
+  interfaces.forEach(intf => {
+    const iface = {
+      dhcp4: intf.dhcp,
+    }
+
+    if (!intf.dhcp) {
+      iface.addresses = [`${intf.ip}/${intf.mask}`]
+      iface.routes = [{ to: "default", via: intf.gateway }]
+      iface.nameservers = { addresses: intf.dns.split(',').map(x => x.trim()) }
+    }
+
+    config.network.ethernets[intf.name] = iface
+  })
+
+  return yaml.dump(config)
+}
+
+

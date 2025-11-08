@@ -14,11 +14,12 @@
       <!--Configurar interfaz-->
       <!--Modal para agregar servicio-->
       <div class="flex items-center order-2 justify-between gap-4 mt-4 mb-4">
-        <button
-          @click="showInterfaceModal = true"
-          class="rounded-lg bg-brand-500 px-4 py-2 text-white hover:bg-brand-600">
-          Configurar interfaz
-        </button>
+        <Button @click="showInterfaceModal = true">
+          <div v-if="saving"><!--Configurar spinner al guardar-->
+              <SpinnerMini width="15" height="15" />
+            </div>
+              {{ saving ? 'Guardando...' : 'Configurar interfaz' }}          
+        </Button>
       </div>
       <!--Componentes de interfaces-->
       <div v-if="network && network.length" class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 mt-2">
@@ -108,18 +109,24 @@
           rows="6"
           spellcheck="false"
           class="min-h-54 dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:shadow-focus-ring focus:outline-hidden focus:ring-0 disabled:border-gray-100 disabled:bg-gray-50 disabled:placeholder:text-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 dark:disabled:border-gray-800 dark:disabled:bg-white/[0.03] dark:disabled:placeholder:text-white/15"
-        ></textarea> 
+        ></textarea>         
         <label class="mb-1.5 block text-sm font-medium text-gray-400 dark:text-gray-600">
           *La sintaxis de YAML depende en gran medida del uso de sangrías y del número de espacios para representar la estructura de los datos. Si el formato no se aplica correctamente las configuración de red no se aplicará.
         </label>
         <div class="flex items-center mt-4 mb-4 gap-4">
-          <Button variant="primary" size="md" @click="saveNetplan()">
-            <div v-if="saving"><!--Configurar spinner al guardar-->
+          <Button variant="success" size="md" @click="saveNetplan(netplanInfo)">
+            <div v-if="savingInterface"><!--Configurar spinner al guardar-->
               <SpinnerMini width="15" height="15" />
             </div>
-              {{ saving ? 'Guardando...' : 'Guardar' }}
+              {{ saving ? 'Guardando...' : 'Guardar cambios' }}
           </Button>
           <!--Button variant="error" size="md">Cancelar</Button-->
+          <Button
+          v-if="netplanInfo.length>0"
+          @click="download('netplanconfig.txt', netplanInfo)"
+          variant="primary">
+          Descargar
+        </Button>
         </div>
         <a class="underline cursor-pointer text-brand-500" href="https://documentation.ubuntu.com/server/explanation/networking/configuring-networks/">Configuración de red Ubuntu Server</a>
       </div><!-- Fin editar archivo netplan-->
@@ -196,12 +203,12 @@
                   id="interface"
                   class="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"                  
                 >
-                <option value="0" disabled>Seleccionar interfaz</option>
+                <option value="-1" disabled>Seleccionar interfaz</option>
                 <option                
                   v-for="(interfaceInfo, index) in network"
                   :key="interfaceInfo.ifaceName"
                   :value="index" class="text-gray-700 dark:bg-gray-900 dark:text-gray-400">
-                  {{interfaceInfo.ifaceName}}                  
+                  {{interfaceInfo.ifaceName}}                                  
                 </option>
               </select>
               <span class="absolute z-30 text-gray-700 -translate-y-1/2 pointer-events-none right-4 top-1/2 dark:text-gray-400">
@@ -228,7 +235,7 @@
           <div class="flex items-center gap-4 mt-4 mb-4">
             <h4 class="text-gray-800 dark:text-white/90"><strong>DHCP</strong></h4>
             <ToggleSwitch
-              v-model="toggle"
+              v-model="DHCP"
               @toggle-off="showConfigInterface = true"
               @toogle-on="showConfigInterface = false"
             />
@@ -236,12 +243,13 @@
             <label class="mb-1.5 block text-sm font-medium text-gray-400 dark:text-gray-600">
               El protocolo de configuración dinámica de host (DHCP) para la asignación automática de direcciones IP.
             </label>
-          <div v-if="!toggle"><!--Parametros interfaz-->
+          <div v-if="!DHCP"><!--Parametros interfaz-->
             <div>
               <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-400">
                 IP:
               </label>
               <input
+                v-model="ip"
                 type="text"
                 placeholder="Ejemplo: 192.168.0.10"
                 class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
@@ -252,6 +260,7 @@
                 Máscara de subred (subnet mask):
               </label>
               <input
+                v-model="subnet"
                 type="text"
                 placeholder="Ejemplo: 255.255.255.0"  
                 class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
@@ -262,8 +271,9 @@
                 Puerta de enlace (Gateway):
               </label>
               <input
+                v-model="gateway"
                 type="text"
-                placeholder="Ejemplo: 255.255.255.0"  
+                placeholder="Ejemplo: 192.168.0.1"  
                 class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                 />          
             </div>  
@@ -272,6 +282,7 @@
                 DNS:
               </label>
               <input
+                v-model="dns"
                 type="text"
                 placeholder="Ejemplo: 8.8.8.8"  
                 class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
@@ -306,25 +317,108 @@
   const CommandPanel = useCommandPanel();
 
   //Modal configurar interfaz
-  const toggle = ref(false)
   const showInterfaceModal = ref(false)
   const errorModal = ref('')
   const indexInterface = ref(0)
   const loading = ref(false)
   const saving = ref(false)
+  const savingInterface = ref(false)
+  
+  //Parametros interfaz / v-model
+  const DHCP = ref(false)
+  const ip = ref('')
+  const subnet = ref('')
+  const gateway = ref('')
+  const dns = ref('')
 
-  const saveInterface = ()=>{
-    if(indexInterface.value===0){
-      errorModal.value = 'Seleccione una interfaz'
-      return
-    }
-    errorModal.value = ''
-    showInterfaceModal.value = false
-    sendStatus(false,"Configurar interfaz "+network.value[indexInterface.value].ifaceName,"OK","OK2")   
+  async function saveInterface() {
+  //Validaciones básicas de selección
+  if (indexInterface.value === -1) {
+    errorModal.value = 'Seleccione una interfaz.'
+    return
+  } else if (indexInterface.value === 0) {
+    errorModal.value = 'La interfaz "lo" (loopback) no se puede configurar.'
+    return
   }
 
+  //Validaciones si DHCP está desactivado
+  if (!DHCP.value) {
+    if (ip.value === '') {
+      errorModal.value = 'Ingrese una dirección IP.'
+      return
+    }
+    if (subnet.value === '') {
+      errorModal.value = 'Ingrese una máscara de subred.'
+      return
+    }
+    if (gateway.value === '') {
+      errorModal.value = 'Ingrese una puerta de enlace.'
+      return
+    }
+  }
+
+  //Limpiar errores
+  errorModal.value = ''
+  showInterfaceModal.value = false
+  //Cálculo del CIDR desde la máscara
+  const cidr = maskToCIDR(subnet.value)
+
+  //Conversión de DNS a lista
+  const dnsArray = dns.value
+    ? dns.value.split(',').map(x => x.trim()).join(', ')
+    : ''
+
+  // 🔹 Obtener nombre de la interfaz seleccionada
+  const interfaceName = network.value[indexInterface.value].ifaceName
+  const dhcpStatus = DHCP.value ? 'true' : 'false'
+
+  //Generación dinámica del archivo Netplan
+  const netplanConfig = `
+network:
+  version: 2
+  ethernets:
+    ${interfaceName}:
+      dhcp4: ${dhcpStatus}${!DHCP.value ? `
+      addresses:
+        - ${ip.value}/${cidr}
+      routes:
+        - to: default
+          via: ${gateway.value}
+      nameservers:
+        addresses: [${dnsArray}]` : ''}
+`
+
+  // Validación extra (opcional): verificar formato de IP
+  if (!validateIP(ip.value) && !DHCP.value) {
+    errorModal.value = 'Dirección IP inválida.'
+    return
+  }
+  if (!validateIP(gateway.value) && !DHCP.value) {
+    errorModal.value = 'Puerta de enlace inválida.'
+    return
+  }
+
+  //Guardar y aplicar configuración
+    let state = true
+    try {
+      await saveNetplan(netplanConfig)      
+    } catch (err) {
+      console.error('Error al guardar/aplicar Netplan:', err)
+      state = false
+    } finally {      
+      notificationStore.add(
+        state ? 'success' : 'error',
+        'Interfaz de red',
+        state
+          ? 'Configuración de interfaz guardada exitosamente.'
+          : 'Error al guardar la configuración de la interfaz.'
+      )
+    }
+  }
+
+
   //Guardar cambios archivo netplan
-  async function saveNetplan() {      
+  async function saveNetplan(configFile) {      
     saving.value = true
     //Revisar sintaxis archivo yaml
     //const check = checkYaml(netplanInfo.value)
@@ -339,14 +433,14 @@
     let output = ''
     let state = false
     try {
-      if (!netplanInfo.value) {
+      if (!configFile) {
         output = 'El contenido del archivo no puede estar vacío.'
         throw new Error('El contenido del archivo no puede estar vacío.')
       }
       const response = await fetch(`${apiURL}/api/exec/netplan/save`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: netplanInfo.value })
+      body: JSON.stringify({ content: configFile })
     })
   
     const data = await response.json()
@@ -391,6 +485,7 @@
       if (data.success) {
         output = data.output
         state = true
+        await loadMetrics() // Recargar métricas después de aplicar cambios
       } else {
         output = data.error || 'Error desconocido al guardar el archivo.'
       }
@@ -408,18 +503,6 @@
     } catch (err) {
       console.error("Error al aplicar Netplan:", err)
     }
-  }
-
-  const sendStatus=(state,desc,output1,output2)=>{
-    CommandPanel.add({
-      commands: [
-        { command: "sudo nano /etc/netplan/50-netplan.yaml", title: "Editar archivo de red", description: "Utilizando el programa 'nano' se edita el archivo de red. El comando 'sudo' es necesario ya que se requieren privilegios para realizar esta tarea.", output: output1 || '' },
-        { command: "sudo netplan apply", title: "Aplicar cambios", description: "Se aplican los cambios realizados al archivo de red al sistema.", output: output2 || '' },
-      ],
-      state: state ? "success" : "error",
-      description: desc,
-    });
-    notificationStore.add(state ? 'success' : 'error',state ? 'Éxito' : 'Error', state ? 'Los cambios en el archivo de red se guardaron correctamente.' : "Error al guardar los cambios en el archivo de red.")
   }
 
   //Peticiones
@@ -528,6 +611,30 @@
       return Type
     }
   }
+
+  function maskToCIDR(mask) {
+  return mask.split('.')
+    .map(octet => parseInt(octet, 10).toString(2))
+    .join('')
+    .split('1').length - 1
+  }
+
+  function validateIP(ip) {
+    if (!ip) return true // permite vacío si DHCP está activado
+    const regex =
+      /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
+    return regex.test(ip)
+  }
+  // función para descargar logs
+  function download(filename, content) {
+    const blob = new Blob([content], { type: "text/plain;charset=utf-8" })
+    const link = document.createElement("a")
+    link.href = URL.createObjectURL(blob)
+    link.download = filename
+    link.click()
+    URL.revokeObjectURL(link.href)
+  }
+
 </script>
 
 

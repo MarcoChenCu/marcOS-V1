@@ -169,7 +169,7 @@
   import CopytoClipboard from "@/components/common/CopytoClipboard.vue";
   import { notificationStore } from "@/stores/notificationStore";
   import { useCommandPanel } from "@/stores/commandPanel";
-  import { OptionIcon, Spinner, WarningIcon, TrashIcon } from "@/icons";
+  import { Spinner, WarningIcon, TrashIcon } from "@/icons";
   import SpinnerComponent from "@/components/common/Spinner.vue";
 
   const currentPageTitle = ref("Firewall");

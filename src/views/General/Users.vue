@@ -247,7 +247,7 @@
             command: 'echo "'+username.value+':contraseña" | sudo chpasswd',
             title: 'Establecer contraseña',
             description: 'Con privilegios se ejecuta el comando \'chpasswd\' para establecer la contraseña del usuario '+username.value+'.',
-            output: data.output,
+            output: '',
           },
         ],
         state: data.success ? 'success' : 'error',
