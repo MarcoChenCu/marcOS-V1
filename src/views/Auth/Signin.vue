@@ -97,7 +97,7 @@
                     <!-- Checkbox -->
                     <div class="flex items-center justify-between">
                       <div>
-                        <label
+                        <!--label
                           for="keepLoggedIn"
                           class="flex items-center text-sm font-normal text-gray-700 cursor-pointer select-none dark:text-gray-400"
                         >
@@ -136,7 +136,7 @@
                             </div>
                           </div>
                           Mantener sesión iniciada
-                        </label>
+                        </label-->
                       </div>                      
                     </div>
                     <!-- Button -->
@@ -199,14 +199,12 @@
   const handleSubmit = async () => {
     resStatus.value = true
     try {
-    const apiURL = import.meta.env.VITE_API_URL
-      //const response = await axios.post("http://192.168.1.192:3000/api/login", {
+    const apiURL = import.meta.env.VITE_API_URL      
 
-      const response = await axios.post(`${apiURL}/api/login`, {
-      //const response = await axios.post("http://localhost:3000/api/login", {
+      const response = await axios.post(`${apiURL}/api/login`, {      
         user: user.value,
         password: password.value,
-        keepLoggedIn: keepLoggedIn.value,
+        //keepLoggedIn: keepLoggedIn.value, //nuevo campo para mantener sesión
       })
       if (response.data.success) {
         localStorage.setItem("token", response.data.token)

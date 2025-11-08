@@ -368,7 +368,7 @@
     ? dns.value.split(',').map(x => x.trim()).join(', ')
     : ''
 
-  // 🔹 Obtener nombre de la interfaz seleccionada
+  //Obtener nombre de la interfaz seleccionada
   const interfaceName = network.value[indexInterface.value].ifaceName
   const dhcpStatus = DHCP.value ? 'true' : 'false'
 
