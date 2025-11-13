@@ -181,7 +181,7 @@ async function Restart(){
   //Ejecutar acciones de reinicio y apagado
   async function powerActions(command) {
     try {
-      const res = await fetch(`${apiURL}/api/exec/power/${command}`)
+      const res = await fetch(`${apiURL}/exec/power/${command}`)
       const data = await res.json()
       return data
     } catch (err) {

@@ -253,7 +253,7 @@
     let warning = false
 
     try {
-      const response = await fetch(`${apiURL}/api/exec/logs/read`, {
+      const response = await fetch(`${apiURL}/exec/logs/read`, {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ filename: fileName }),

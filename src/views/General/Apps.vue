@@ -50,11 +50,11 @@
     let data = {success: false, message: 'Error inesperado al instalar la aplicación', output: 'ERROR'};
     let updateData = {success: false, message: 'Error al intentar actualizar la listas de paquetes', output: 'ERROR'};
     try {
-      const update = await fetch(`${apiURL}/api/updates/update`, {
+      const update = await fetch(`${apiURL}/updates/update`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
       });
-      const response = await fetch(`${apiURL}/api/apps/install`, {
+      const response = await fetch(`${apiURL}/apps/install`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ appName }),
@@ -95,7 +95,7 @@
     installingApp.value = appName;
     let data = {success: false, message: 'Error inesperado al desinstalar la aplicación', output: 'ERROR'};
     try {
-      const response = await fetch(`${apiURL}/api/apps/uninstall`, {
+      const response = await fetch(`${apiURL}/apps/uninstall`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ appName }),
@@ -125,7 +125,7 @@
   //Verificar instalación de una app (devuelve true/false)
   async function appIsInstalled(appName,key) {
     try {
-      const response = await fetch(`${apiURL}/api/apps/installed`, {
+      const response = await fetch(`${apiURL}/apps/installed`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ appName,key }),

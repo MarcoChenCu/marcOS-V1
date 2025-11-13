@@ -11,8 +11,23 @@ import appRoutes from "./src/routes/app.routes.js";
 import userRoutes from "./src/routes/user.routes.js";
 const app = express()
 
+const allowedOrigins = [
+  "http://localhost:5173",        // para desarrollo local
+  "https://srv1095612.hstgr.cloud" // dominio de producción
+]
+
+
 // CORS (ajusta origen si lo deseas)
-app.use(cors({ origin: '*', credentials: true }))
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error("No autorizado por CORS"))
+    }
+  },
+  credentials: true
+}))
 app.use(bodyParser.json())
 
 // Rutas API

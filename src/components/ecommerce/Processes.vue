@@ -139,7 +139,7 @@
   async function AdminProcess(pid, action) {
     let response = {success: false, output: ''}
     try {
-      const res = await fetch(`${apiURL}/api/process/admin`, {
+      const res = await fetch(`${apiURL}/process/admin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

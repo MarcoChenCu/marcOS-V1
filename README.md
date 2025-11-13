@@ -1,5 +1,5 @@
 # marcOS
-Distribución Linux basada en Ubuntu Server 22.04 LTS que ofrece un entorno simple e intuitivo para administrar servidores.
+Panel web para Ubuntu Server 22.04 LTS que ofrece un entorno simple e intuitivo para administrar servidores.
 
 ## Estructura del Proyecto
 

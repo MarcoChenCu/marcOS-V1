@@ -159,8 +159,8 @@ async function loadMetrics() {
 
     // Promesas simultáneas para mayor eficiencia
     const [systemRes, processRes] = await Promise.all([
-      fetch(`${apiURL}/api/system`),
-      fetch(`${apiURL}/api/process`)
+      fetch(`${apiURL}/system`),
+      fetch(`${apiURL}/process`)
     ])
 
     // Verifica que las respuestas sean válidas antes de procesarlas

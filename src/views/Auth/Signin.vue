@@ -201,7 +201,7 @@
     try {
     const apiURL = import.meta.env.VITE_API_URL      
 
-      const response = await axios.post(`${apiURL}/api/login`, {      
+      const response = await axios.post(`${apiURL}/login`, {      
         user: user.value,
         password: password.value,
         //keepLoggedIn: keepLoggedIn.value, //nuevo campo para mantener sesión

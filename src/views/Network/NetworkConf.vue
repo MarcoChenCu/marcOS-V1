@@ -437,7 +437,7 @@ network:
         output = 'El contenido del archivo no puede estar vacío.'
         throw new Error('El contenido del archivo no puede estar vacío.')
       }
-      const response = await fetch(`${apiURL}/api/exec/netplan/save`, {
+      const response = await fetch(`${apiURL}/exec/netplan/save`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ content: configFile })
@@ -475,7 +475,7 @@ network:
 
   async function applyNetplanChanges() {
     try {
-      const res = await fetch(`${apiURL}/api/exec/netplan/apply`, {
+      const res = await fetch(`${apiURL}/exec/netplan/apply`, {
         method: "POST"
       })
 
@@ -516,8 +516,8 @@ network:
     try {
       // Ejecutar ambas peticiones en paralelo
       const [resSystem, resNetplan] = await Promise.all([
-        fetch(`${apiURL}/api/system`, { cache: "no-store" }),
-        fetch(`${apiURL}/api/exec/netplan`, { cache: "no-store" })
+        fetch(`${apiURL}/system`, { cache: "no-store" }),
+        fetch(`${apiURL}/exec/netplan`, { cache: "no-store" })
       ])
 
       // Validar respuestas individualmente

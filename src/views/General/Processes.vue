@@ -28,7 +28,7 @@
 
   async function loadMetrics() {
     try {
-      const res = await fetch(`${apiURL}/api/process`, { cache: "no-store" })
+      const res = await fetch(`${apiURL}/process`, { cache: "no-store" })
     
       // Si la respuesta no es correcta, lanzar error
       if (!res.ok) throw new Error(`Error HTTP: ${res.status}`)

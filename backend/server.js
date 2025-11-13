@@ -1,7 +1,9 @@
+
 import app from "./app.js"
 
-const PORT = 3000
+const PORT = process.env.PORT || 3000
+const HOST = process.env.HOST || "127.0.0.1"
 
-app.listen(PORT, () => {
-  console.log(`Backend corriendo en http://localhost:${PORT}`)
+app.listen(PORT, HOST, () => {
+  console.log(`Backend corriendo en http://${HOST}:${PORT}`)
 })

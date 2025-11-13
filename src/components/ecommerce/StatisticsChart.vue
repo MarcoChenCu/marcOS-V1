@@ -115,7 +115,7 @@ const chartOptions = ref({
 // Función para obtener las métricas
 async function fetchMetrics() {
   try {
-    const res = await fetch(`${apiURL}/api/system`)
+    const res = await fetch(`${apiURL}/system`)
     const data = await res.json()
 
     const cpu = data?.cpu?.usage ?? 0

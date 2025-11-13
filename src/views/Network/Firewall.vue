@@ -29,7 +29,7 @@
       </div>
       <!--Tabla servicios firewall-->
       <div class="max-w-full overflow-x-auto custom-scrollbar">
-        <table v-if="hasData" class="min-w-full">
+        <table v-if="!loadingFirewall" class="min-w-full">
           <thead>
             <tr class="border-t border-gray-100 dark:border-gray-800">
               <th class="py-3 text-left">
@@ -187,6 +187,7 @@
   //Servi
   const Services = ref({})
   const hasData = computed(() => (Services.value?.length > 0))
+  const loadingFirewallData = ref(false)
 
   /**Administrar servicios */
   //Modal eliminar servicio
@@ -222,7 +223,7 @@
         return
       }
 
-      const res = await fetch(`${apiURL}/api/exec/ufw/allow-delete`, {
+      const res = await fetch(`${apiURL}/exec/ufw/allow-delete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ service: currentService })
@@ -274,7 +275,7 @@
         return
       }
 
-      const res = await fetch(`${apiURL}/api/exec/ufw/allow`, {
+      const res = await fetch(`${apiURL}/exec/ufw/allow`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ service: currentService })
@@ -338,6 +339,7 @@
   //Obtener el estado del firewall
 // Obtener estado y reglas del firewall
   async function getFirewallStatus() {
+    loadingFirewallData.value = true
     let generalStatus = 'error';
     let output = '';
     let rulesList = [];
@@ -352,6 +354,10 @@
       const isActive = lowerOutput.includes('status: active');
       toggle.value = isActive;
 
+      if(!isActive){
+        generalStatus = 'warning';
+        throw new Error('El firewall está desactivado.');
+      }
       // Parsear reglas desde la salida del comando
       const lines = output.split('\n');
 
@@ -406,7 +412,7 @@
         output = res.error;
       }
     }
-
+    loadingFirewallData.value = false;
     // Enviar al panel
     CommandPanel.add({
       commands: [
@@ -455,7 +461,7 @@
    async function modFirewall(command) {
     try {
       loadingFirewall.value = true
-      const res = await fetch(`${apiURL}/api/exec/ufw`, {
+      const res = await fetch(`${apiURL}/exec/ufw`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ command: command }),

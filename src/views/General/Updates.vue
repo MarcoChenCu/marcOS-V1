@@ -123,7 +123,7 @@ const updatesRef = ref(null);
     try {      
       let method = "POST"
       if(command==="update-list") method="GET"
-      const res = await fetch(`${apiURL}/api/updates/${command}`, {
+      const res = await fetch(`${apiURL}/updates/${command}`, {
         method: method,
         headers: { "Content-Type": "application/json" },
       })

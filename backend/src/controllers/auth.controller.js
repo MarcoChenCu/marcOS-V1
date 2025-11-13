@@ -3,7 +3,7 @@ const require = createRequire(import.meta.url)
 const pam = require("authenticate-pam")
 const jwt = require("jsonwebtoken")
 
-const SECRET_KEY = "2c2e693a7c007d6b50a3e1ae55d652c8be8aeba0adba9209f3153e8b2d26e74c"
+const SECRET_KEY = process.env.SECRET_KEY || "mi_clave_secreta"
 
 export const login = (req, res) => {
   const { user, password } = req.body

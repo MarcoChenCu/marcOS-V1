@@ -219,7 +219,7 @@
     //Realizar petición para crear usuario
     let data = {success: false, message: 'Error inesperado al crear el usuario', output: 'ERROR'};    
     try {
-      const response = await fetch(`${apiURL}/api/users/create`, {
+      const response = await fetch(`${apiURL}/users/create`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ username: username.value, name: name.value, password: password.value}),
@@ -264,7 +264,7 @@
     //Realizar petición para eliminar usuario
     let data = {success: false, message: 'Error inesperado al eliminar el usuario', output: 'ERROR'};
     try {
-      const response = await fetch(`${apiURL}/api/users/delete`, {
+      const response = await fetch(`${apiURL}/users/delete`, {
         method: 'DELETE',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ username: userInfo.value.username }),
@@ -300,7 +300,7 @@
    async function getUsers() {
     try {
       loading.value = true
-      const res = await fetch(`${apiURL}/api/users/list`, {
+      const res = await fetch(`${apiURL}/users/list`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },        
       })      
